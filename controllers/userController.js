@@ -15,7 +15,6 @@ userController.get('/', (req, res) => {
 	res.status(200).send();
 });
 
-// TODO: Register new user
 userController.post('/register', async (req, res) => {
 	try {
 		const { email, password } = req.body;
