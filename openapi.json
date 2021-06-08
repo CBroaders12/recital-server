@@ -1,0 +1,428 @@
+{
+	"openapi": "3.0.2",
+	"info": {
+		"title": "Recital API",
+		"version": "1.0"
+	},
+	"servers": [{ "url": "http://localhost:4200/api" }],
+	"paths": {
+		"/ping": {
+			"get": {
+				"description": "Check that the server is active and responding to requests",
+				"responses": {
+					"200": {
+						"description": "Server is up and receiving requests"
+					}
+				}
+			}
+		},
+		"/users/login": {
+			"post": {
+				"tags": ["users"],
+				"operationId": "loginUser",
+				"summary": "Log in a user",
+				"description": "Log in an existing user into the api by returning an auth token",
+				"requestBody": {
+					"description": "email and password of an existing user",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"$ref": "#/components/schemas/User"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "The request has succeeded and a session token for the logged in user is returned",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Not Authorized"
+					}
+				}
+			}
+		},
+		"/users/register": {
+			"post": {
+				"tags": ["users"],
+				"operationId": "registerUser",
+				"summary": "Register a new user",
+				"description": "Register a new user by creating the user and logs them in by returning an auth token",
+				"requestBody": {
+					"description": "email and password of a new user",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"$ref": "#/components/schemas/User"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "User created and logged in with session token",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Missing email or password in request or user already exists"
+					}
+				}
+			}
+		},
+		"/recitals": {
+			"post": {
+				"tags": ["recitals"],
+				"operationId": "createRecital",
+				"security": [{ "bearerAuth": [] }],
+				"summary": "Create new recital",
+				"description": "Create a new recital under the logged-in user's account",
+				"requestBody": {
+					"description": "The recital to be created",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"$ref": "#/components/schemas/Recital"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Recital created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"$ref": "#/components/schemas/Recital"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/UnauthorizedError"
+					}
+				}
+			},
+			"get": {
+				"tags": ["recitals"],
+				"operationId": "getRecitals",
+				"security": [{ "bearerAuth": [] }],
+				"summary": "Return all recitals",
+				"description": "Return all recitals under the logged-in user",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"$ref": "#/components/schemas/Recitals"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/UnauthorizedError"
+					}
+				}
+			}
+		},
+		"/recitals/{recitalId}": {
+			"get": {
+				"tags": ["recitals"],
+				"operationId": "getRecitalById",
+				"security": [{ "bearerAuth": [] }],
+				"summary": "Get a recital by id",
+				"description": "Get a recital belonging to logged-in user by the recital's id",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "recitalId",
+						"schema": {
+							"type": "integer"
+						},
+						"required": true,
+						"description": "Numeric id of the recital to get"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"$ref": "#/components/schemas/Recital"
+								}
+							}
+						}
+					},
+					"401": {
+						"$ref": "#/components/responses/UnauthorizedError"
+					},
+					"404": {
+						"$ref": "#/components/responses/NotFoundError"
+					}
+				}
+			},
+			"put": {
+				"tags": ["recitals"],
+				"summary": "Completely update a recital",
+				"description": "Completely update a recital belonging to a logged-in user by the recital's id",
+				"operationId": "updateRecital",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "recitalId",
+						"schema": {
+							"type": "integer"
+						},
+						"required": true,
+						"description": "Numeric id of the recital to update"
+					}
+				],
+				"requestBody": {
+					"description": "Complete information of a recital to update",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"$ref": "#/components/schemas/Recital"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Recital successfully updated",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"$ref": "#/components/schemas/Recital"
+								}
+							}
+						}
+					},
+					"400": {
+						"$ref": "#/components/responses/InvalidRequestError"
+					},
+					"401": {
+						"$ref": "#/components/responses/UnauthorizedError"
+					},
+					"404": {
+						"$ref": "#/components/responses/NotFoundError"
+					}
+				}
+			},
+			"patch": {
+				"tags": ["recitals"],
+				"summary": "Partially update a recital",
+				"description": "Partially update a recital belonging to a logged-in user by the recital's id",
+				"operationId": "patchRecital",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "recitalId",
+						"schema": {
+							"type": "integer"
+						},
+						"required": true,
+						"description": "Numeric id of the recital to update"
+					}
+				],
+				"requestBody": {
+					"description": "Information of a recital to update",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"$ref": "#/components/schemas/PatchRecital"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Recital successfully updated",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"$ref": "#/components/schemas/Recital"
+								}
+							}
+						}
+					},
+					"400": {
+						"$ref": "#/components/responses/InvalidRequestError"
+					},
+					"401": {
+						"$ref": "#/components/responses/UnauthorizedError"
+					},
+					"404": {
+						"$ref": "#/components/responses/NotFoundError"
+					}
+				}
+			},
+			"delete": {
+				"tags": ["recitals"],
+				"summary": "Delete a recital",
+				"description": "Delete a recital belonging to a logged-in user by the recital's id",
+				"operationId": "deleteRecital",
+				"security": [{ "bearerAuth": [] }],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "recitalId",
+						"schema": {
+							"type": "integer"
+						},
+						"required": true,
+						"description": "Numeric id of the recital to delete"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Recital successfully deleted"
+					},
+					"401": {
+						"$ref": "#/components/responses/UnauthorizedError"
+					},
+					"404": {
+						"$ref": "#/components/responses/NotFoundError"
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"User": {
+				"type": "object",
+				"required": ["email", "password"],
+				"properties": {
+					"email": {
+						"type": "string",
+						"description": "The user's email"
+					},
+					"password": {
+						"type": "string",
+						"description": "The user's password"
+					}
+				}
+			},
+			"Recitals": {
+				"type": "array",
+				"description": "An array of recital objects",
+				"items": {
+					"$ref": "#/components/schemas/Recital"
+				}
+			},
+			"Recital": {
+				"type": "object",
+				"required": ["id", "organizerId", "name"],
+				"properties": {
+					"id": {
+						"type": "integer",
+						"format": "int32",
+						"description": "The recital id"
+					},
+					"organizerId": {
+						"type": "number",
+						"format": "int32",
+						"description": "The id of the user organizing the recital"
+					},
+					"name": {
+						"type": "string",
+						"description": "The name/title of the recital"
+					},
+					"date": {
+						"type": "string",
+						"description": "The date the recital is scheduled to take place"
+					},
+					"location": {
+						"type": "string",
+						"description": "Where the recital is planned"
+					},
+					"description": {
+						"type": "string",
+						"description": "The recital's description"
+					}
+				}
+			},
+			"PatchRecital": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "integer",
+						"format": "int32",
+						"description": "The recital id"
+					},
+					"organizerId": {
+						"type": "number",
+						"format": "int32",
+						"description": "The id of the user organizing the recital"
+					},
+					"name": {
+						"type": "string",
+						"description": "The name/title of the recital"
+					},
+					"date": {
+						"type": "string",
+						"description": "The date the recital is scheduled to take place"
+					},
+					"location": {
+						"type": "string",
+						"description": "Where the recital is planned"
+					},
+					"description": {
+						"type": "string",
+						"description": "The recital's description"
+					}
+				}
+			}
+		},
+		"responses": {
+			"UnauthorizedError": {
+				"description": "Invalid or missing auth token"
+			},
+			"InvalidRequestError": {
+				"description": "Request missing required fields"
+			},
+			"NotFoundError": {
+				"description": "Requested asset not found"
+			}
+		},
+		"securitySchemes": {
+			"bearerAuth": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			}
+		}
+	}
+}
