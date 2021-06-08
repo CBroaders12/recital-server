@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const models = require('../models');
 const {
 	UniqueConstraintError,
 	ValidationError,
@@ -22,7 +22,7 @@ userController.post('/register', async (req, res) => {
 
 		if (!password) throw new ValidationError('Password missing');
 
-		const newUser = await User.create({
+		const newUser = await models.user.create({
 			email,
 			password: bcrypt.hashSync(password),
 		});

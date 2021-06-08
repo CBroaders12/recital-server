@@ -1,10 +1,10 @@
 const app = require('./app');
-const { db } = require('./db');
+const db = require('./models');
 
 const startServer = async () => {
 	try {
-		await db.authenticate();
-		await db.sync();
+		await db.sequelize.authenticate();
+		await db.sequelize.sync({ force: true });
 		app.listen(process.env.PORT, () => {
 			console.log(
 				`[SERVER]: Listening at http://localhost:${process.env.PORT}`
