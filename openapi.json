@@ -45,6 +45,9 @@
 							}
 						}
 					},
+					"400": {
+						"description": "Missing Credentials"
+					},
 					"401": {
 						"description": "Not Authorized"
 					}
