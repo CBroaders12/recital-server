@@ -1,22 +1,19 @@
 const app = require('../app');
 const request = require('supertest');
-const db = require('../models');
+
+const {
+	startTestDB,
+	closeTestDB,
+	truncateTables,
+	registerUser,
+} = require('./testHelpers');
 
 beforeAll(async () => {
-	try {
-		await db.sequelize.authenticate();
-		await db.sequelize.sync({ force: true });
-	} catch (error) {
-		console.error();
-	}
+	await startTestDB();
 });
 
 afterAll(async () => {
-	try {
-		await db.sequelize.close();
-	} catch (error) {
-		console.error(error);
-	}
+	await closeTestDB();
 });
 
 // Test data
@@ -41,23 +38,19 @@ const testUsers = {
 	},
 };
 
-describe('Ping user route', () => {
-	it('/user GET returns 200 - OK status', async () => {
-		const response = await request(app).get('/users');
+describe('/users/ping GET - check users endpoint', () => {
+	it('returns 200 status', async () => {
+		const response = await request(app).get('/users/ping');
 		expect(response.statusCode).toBe(200);
 	});
 });
 
-describe('Register a new user', () => {
+describe('/users/register POST - create new user', () => {
 	afterEach(async () => {
-		try {
-			await db.sequelize.truncate();
-		} catch (error) {
-			console.error(error);
-		}
+		await truncateTables();
 	});
 
-	it('Create a new user and return a token with a 201 - CREATED status', async () => {
+	it('Successful request - creates new user, returns 201 status and token', async () => {
 		const response = await request(app)
 			.post('/users/register')
 			.send(testUsers.goodUser);
@@ -66,7 +59,7 @@ describe('Register a new user', () => {
 		expect(response.body).toHaveProperty('token');
 	});
 
-	it('Missing email returns a 400 - BAD REQUEST status and error message', async () => {
+	it('Missing email - returns 400 status and error message', async () => {
 		const response = await request(app)
 			.post('/users/register')
 			.send(testUsers.missingEmail);
@@ -78,7 +71,7 @@ describe('Register a new user', () => {
 		);
 	});
 
-	it('Missing password returns a 400 - BAD REQUEST status and error message', async () => {
+	it('Missing password - returns 400 status and error message', async () => {
 		const response = await request(app)
 			.post('/users/register')
 			.send(testUsers.missingPassword);
@@ -90,7 +83,7 @@ describe('Register a new user', () => {
 		);
 	});
 
-	it('Email already in use returns a 400 - BAD REQUEST status and error message', async () => {
+	it('Email already in use - returns 400 status and error message', async () => {
 		await request(app).post('/users/register').send(testUsers.goodUser);
 
 		const response = await request(app)
@@ -105,14 +98,13 @@ describe('Register a new user', () => {
 	});
 });
 
-describe('Login an existing user', () => {
+describe('/users/login POST - log in user', () => {
 	//Register a user for each test case
 	beforeAll(async () => {
-		await request(app).post('/users/register').send(testUsers.goodUser);
-		console.log('******* USER REGISTERED *******');
+		await registerUser(testUsers.goodUser);
 	});
 
-	it('Login in existing user and return 200 status and token', async () => {
+	it('Successful request - returns 200 status and token', async () => {
 		const response = await request(app)
 			.post('/users/login')
 			.send(testUsers.goodUser);
@@ -121,7 +113,7 @@ describe('Login an existing user', () => {
 		expect(response.body).toHaveProperty('token');
 	});
 
-	it('Incorrect email returns 401 - UNAUTHORIZED with message', async () => {
+	it('Incorrect email - returns 401 status and error message', async () => {
 		const response = await request(app)
 			.post('/users/login')
 			.send(testUsers.incorrectEmail);
@@ -133,7 +125,7 @@ describe('Login an existing user', () => {
 		);
 	});
 
-	it('Incorrect password returns 401 - UNAUTHORIZED with message', async () => {
+	it('Incorrect password - returns 401 status and error message', async () => {
 		const response = await request(app)
 			.post('/users/login')
 			.send(testUsers.incorrectPassword);
@@ -145,7 +137,7 @@ describe('Login an existing user', () => {
 		);
 	});
 
-	it('Missing password returns 400 - BAD REQUEST with message', async () => {
+	it('Missing password - returns 400 status and error message', async () => {
 		const response = await request(app)
 			.post('/users/login')
 			.send(testUsers.missingPassword);
@@ -157,7 +149,7 @@ describe('Login an existing user', () => {
 		);
 	});
 
-	it('Missing email returns 400 - BAD REQUEST with message', async () => {
+	it('Missing email - returns 400 status and error message', async () => {
 		const response = await request(app)
 			.post('/users/login')
 			.send(testUsers.missingEmail);

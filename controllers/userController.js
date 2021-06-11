@@ -12,7 +12,7 @@ const jwt = require('jsonwebtoken');
 const userController = Router();
 
 // Ping user route
-userController.get('/', (req, res) => {
+userController.get('/ping', (req, res) => {
 	res.status(200).send();
 });
 
@@ -50,7 +50,6 @@ userController.post('/register', async (req, res) => {
 	}
 });
 
-// TODO: Login new user
 userController.post('/login', async (req, res) => {
 	try {
 		const { email, password } = req.body;

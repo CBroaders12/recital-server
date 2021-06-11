@@ -3,7 +3,7 @@ const db = require('./models');
 
 const startServer = async () => {
 	try {
-		await db.sequelize.authenticate();
+		await db.sequelize.authenticate({ force: true });
 		await db.sequelize.sync();
 		app.listen(process.env.PORT, () => {
 			console.log(
