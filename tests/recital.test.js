@@ -5,6 +5,7 @@ const {
 	closeTestDB,
 	truncateTables,
 	registerUser,
+	loginUser,
 } = require('./testHelpers');
 
 const testData = {
@@ -47,11 +48,39 @@ afterAll(async () => {
 });
 
 describe('/recitals/ping GET - check recital endpoint', () => {
-	it.todo('returns 200 status');
+	it('returns 200 status', async () => {
+		const {
+			body: { token },
+		} = await loginUser(testData.testUser);
+		const response = await request(app)
+			.get('/recitals/ping')
+			.set('Authorization', `Bearer ${token}`);
+
+		expect(response.statusCode).toBe(200);
+	});
+
+	it('Missing or invalid token - returns 401 status and error message', async () => {
+		const response = await request(app).get('/recitals/ping');
+
+		expect(response.statusCode).toBe(401);
+		expect(response.body).toHaveProperty(
+			'message',
+			'Missing or invalid token'
+		);
+	});
 });
 
 describe('/recitals POST - create a new recital for user', () => {
-	it.todo('Successful request - returns 201 and the recital object');
+	it.todo(
+		'Successful request - returns 201 and the recital object' /*, async () => {
+		const response = await request(app)
+			.post('/recitals')
+			.send(testData.validRecital);
+
+		expect(response.statusCode).toBe(201);
+		expect(response.body).toHaveProperty('recital');
+	}*/
+	);
 	it.todo('Missing or invalid token - returns 401 status and error message');
 	it.todo('Missing recital name - returns 400 status and error message');
 });
