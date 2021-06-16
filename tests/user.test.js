@@ -1,12 +1,8 @@
 const app = require('../app');
 const request = require('supertest');
+const db = require('../models');
 
-const {
-	startTestDB,
-	closeTestDB,
-	truncateTables,
-	registerUser,
-} = require('./testHelpers');
+const { startTestDB, closeTestDB, registerUser } = require('./testHelpers');
 
 beforeAll(async () => {
 	await startTestDB();
@@ -21,6 +17,10 @@ const testUsers = {
 	goodUser: {
 		email: 'test@email.com',
 		password: 'thisIsAPassword',
+	},
+	goodUser2: {
+		email: 'test2@email.com',
+		password: 'ThisIsAlsoAPassword',
 	},
 	incorrectEmail: {
 		email: 'jest@email.com',
@@ -46,10 +46,6 @@ describe('/users/ping GET - check users endpoint', () => {
 });
 
 describe('/users/register POST - create new user', () => {
-	afterEach(async () => {
-		await truncateTables();
-	});
-
 	it('Successful request - creates new user, returns 201 status and token', async () => {
 		const response = await request(app)
 			.post('/users/register')
@@ -84,8 +80,6 @@ describe('/users/register POST - create new user', () => {
 	});
 
 	it('Email already in use - returns 400 status and error message', async () => {
-		await request(app).post('/users/register').send(testUsers.goodUser);
-
 		const response = await request(app)
 			.post('/users/register')
 			.send(testUsers.goodUser);

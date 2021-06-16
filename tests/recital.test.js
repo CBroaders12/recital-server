@@ -3,7 +3,6 @@ const app = require('../app');
 const {
 	startTestDB,
 	closeTestDB,
-	truncateTables,
 	registerUser,
 	loginUser,
 } = require('./testHelpers');
@@ -43,7 +42,6 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-	await truncateTables();
 	await closeTestDB();
 });
 

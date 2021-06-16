@@ -5,28 +5,11 @@ const app = require('../app');
 const helpers = {};
 
 helpers.startTestDB = async () => {
-	try {
-		await db.sequelize.authenticate();
-		await db.sequelize.sync({ force: true });
-	} catch (error) {
-		console.error();
-	}
+	await db.sequelize.sync({ force: true });
 };
 
 helpers.closeTestDB = async () => {
-	try {
-		await db.sequelize.close();
-	} catch (error) {
-		console.error(error);
-	}
-};
-
-helpers.truncateTables = async () => {
-	try {
-		await db.sequelize.truncate({ cascade: true });
-	} catch (error) {
-		console.error(error);
-	}
+	await db.sequelize.close();
 };
 
 helpers.registerUser = async (testUser) => {
