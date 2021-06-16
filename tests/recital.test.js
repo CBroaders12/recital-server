@@ -71,18 +71,48 @@ describe('/recitals/ping GET - check recital endpoint', () => {
 });
 
 describe('/recitals POST - create a new recital for user', () => {
-	it.todo(
-		'Successful request - returns 201 and the recital object' /*, async () => {
+	it('Successful request - returns 201 and the recital object', async () => {
+		const {
+			body: { token },
+		} = await loginUser(testData.testUser);
+
 		const response = await request(app)
 			.post('/recitals')
+			.set('Authentication', `Bearer ${token}`)
 			.send(testData.validRecital);
 
 		expect(response.statusCode).toBe(201);
 		expect(response.body).toHaveProperty('recital');
-	}*/
-	);
-	it.todo('Missing or invalid token - returns 401 status and error message');
-	it.todo('Missing recital name - returns 400 status and error message');
+	});
+
+	it('Missing or invalid token - returns 401 status and error message', async () => {
+		const response = await request(app)
+			.post('/recitals')
+			.send(testData.validRecital);
+
+		expect(response.statusCode).toBe(401);
+		expect(response.body).toHaveProperty(
+			'message',
+			'Missing or invalid token'
+		);
+	});
+
+	it('Missing recital name - returns 400 status and error message', async () => {
+		const {
+			body: { token },
+		} = await loginUser(testData.testUser);
+
+		const response = await request(app)
+			.post('/recitals')
+			.set('Authentication', `Bearer ${token}`)
+			.send(testData.missingName);
+
+		expect(response.statusCode).toBe(400);
+		expect(response.body).toHaveProperty(
+			'message',
+			'Recital name must be provided'
+		);
+	});
 });
 
 describe("/recitals GET - return all of a user's recitals", () => {

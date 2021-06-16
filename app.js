@@ -7,6 +7,7 @@ const controllers = require('./controllers');
 const middlewares = require('./middleware');
 
 app.use(Express.json());
+app.use(middlewares.cors);
 
 app.use('/ping', (req, res) => {
 	res.status(200).send();

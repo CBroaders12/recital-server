@@ -10,16 +10,11 @@ const validateToken = async (req, res, next) => {
 		if (!req.headers.authorization)
 			throw new AuthorizationError('No token provided');
 
-		console.log(req.headers);
 		const { authorization } = req.headers;
-
-		console.log(authorization);
 
 		const token = authorization.includes('Bearer')
 			? authorization.split(' ')[1]
 			: authorization;
-
-		console.log(token);
 
 		const payload = jwt.verify(token, process.env.JWT_SECRET);
 
