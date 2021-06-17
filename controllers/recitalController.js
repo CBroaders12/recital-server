@@ -152,6 +152,66 @@ recitalController
 				res.status(500).send();
 			}
 		}
+	})
+	.get(async (req, res) => {
+		try {
+			const { recitalId } = req.params;
+			const { id: organizerId } = req.user;
+
+			const recital = await models.recital.findOne({
+				where: {
+					id: recitalId,
+					organizerId,
+				},
+			});
+
+			if (!recital)
+				throw new NotFoundError(
+					'No recital with given id found for user'
+				);
+
+			res.status(200).json({
+				recital,
+			});
+		} catch (error) {
+			if (error instanceof NotFoundError) {
+				res.status(404).json({
+					message: error.message,
+				});
+			} else {
+				res.status(500).send();
+			}
+		}
+	})
+	.delete(async (req, res) => {
+		try {
+			const { recitalId } = req.params;
+			const { id: organizerId } = req.user;
+
+			const toDestroy = await models.recital.findOne({
+				where: {
+					id: recitalId,
+					organizerId,
+				},
+			});
+
+			if (!toDestroy)
+				throw new NotFoundError(
+					'No recital with given id found for user'
+				);
+
+			await toDestroy.destroy();
+
+			res.status(204).send();
+		} catch (error) {
+			if (error instanceof NotFoundError) {
+				res.status(404).json({
+					message: error.message,
+				});
+			} else {
+				res.status(500).send();
+			}
+		}
 	});
 
 module.exports = recitalController;

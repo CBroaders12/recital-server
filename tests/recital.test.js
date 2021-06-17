@@ -267,13 +267,82 @@ describe('/recitals/{recitalId} PATCH - update recital with given recitalId', ()
 });
 
 describe('recitals/{recitalId} GET - return recital with given recitalId', () => {
-	it.todo('Successful request - returns 200 status and recital object');
-	it.todo('Missing or invalid token - returns 401 status and error message');
-	it.todo('Invalid recitalId - returns 404 status and error message');
+	it('Successful request - returns 200 status and recital object', async () => {
+		const {
+			body: { token },
+		} = await loginUser(testData.testUser);
+
+		const response = await request(app)
+			.get('/recitals/1')
+			.set('Authorization', token);
+
+		expect(response.statusCode).toBe(200);
+		expect(response.body).toHaveProperty('recital');
+	});
+
+	it('Missing or invalid token - returns 401 status and error message', async () => {
+		const response = await request(app).get('/recitals/1');
+
+		expect(response.statusCode).toBe(401);
+		expect(response.body).toHaveProperty(
+			'message',
+			'Missing or invalid token'
+		);
+	});
+
+	it('Invalid recitalId - returns 404 status and error message', async () => {
+		const {
+			body: { token },
+		} = await loginUser(testData.testUser);
+
+		const response = await request(app)
+			.get('/recitals/2')
+			.set('Authorization', token);
+
+		expect(response.statusCode).toBe(404);
+		expect(response.body).toHaveProperty(
+			'message',
+			'No recital with given id found for user'
+		);
+	});
 });
 
 describe('/recitals/{recitalId} DELETE - delete recital with given recitalId', () => {
-	it.todo('Successful request - returns 204 status and success message');
-	it.todo('Missing or invalid token - returns 401 and error message');
-	it.todo('Invalid recitalId - returns 404 status and error message');
+	it('Successful request - returns 204 status and success message', async () => {
+		const {
+			body: { token },
+		} = await loginUser(testData.testUser);
+
+		const response = await request(app)
+			.delete('/recitals/1')
+			.set('Authorization', token);
+
+		expect(response.statusCode).toBe(204);
+	});
+
+	it('Missing or invalid token - returns 401 and error message', async () => {
+		const response = await request(app).delete('/recitals/1');
+
+		expect(response.statusCode).toBe(401);
+		expect(response.body).toHaveProperty(
+			'message',
+			'Missing or invalid token'
+		);
+	});
+
+	it('Invalid recitalId - returns 404 status and error message', async () => {
+		const {
+			body: { token },
+		} = await loginUser(testData.testUser);
+
+		const response = await request(app)
+			.delete('/recitals/2')
+			.set('Authorization', token);
+
+		expect(response.statusCode).toBe(404);
+		expect(response.body).toHaveProperty(
+			'message',
+			'No recital with given id found for user'
+		);
+	});
 });
