@@ -1,9 +1,10 @@
 const models = require('../models');
+const { UniqueConstraintError } = require('sequelize/lib/errors');
 const {
-	UniqueConstraintError,
-	ValidationError,
-} = require('sequelize/lib/errors');
-const { AuthorizationError } = require('../errors');
+	AuthorizationError,
+	InvalidRequestError,
+	GeneralError,
+} = require('../errors');
 const { Router } = require('express');
 
 const bcrypt = require('bcryptjs');
@@ -16,11 +17,12 @@ userController.get('/ping', (req, res) => {
 	res.status(200).send();
 });
 
-userController.post('/register', async (req, res) => {
+userController.post('/register', async (req, res, next) => {
 	try {
 		const { email, password } = req.body;
 
-		if (!password) throw new ValidationError('Password missing');
+		if (!password || !email)
+			throw new InvalidRequestError('Missing email or password');
 
 		const newUser = await models.user.create({
 			email,
@@ -35,18 +37,9 @@ userController.post('/register', async (req, res) => {
 			token,
 		});
 	} catch (error) {
-		if (error instanceof UniqueConstraintError) {
-			res.status(400).json({
-				message: 'Email is already registered',
-			});
-		} else if (error instanceof ValidationError) {
-			res.status(400).json({
-				message: 'Missing email or password',
-			});
-		} else {
-			console.error(error.message);
-			res.status(500).send();
-		}
+		console.log('******* ERROR CAUGHT ********');
+		if (error instanceof GeneralError) console.log(error.getCode());
+		next(error);
 	}
 });
 

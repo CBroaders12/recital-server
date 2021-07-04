@@ -1,4 +1,6 @@
-class InvalidRequestError extends Error {
+const GeneralError = require('./GeneralError');
+
+class InvalidRequestError extends GeneralError {
 	constructor(message) {
 		super(message);
 	}

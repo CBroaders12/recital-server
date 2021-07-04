@@ -1,4 +1,6 @@
-class AuthorizationError extends Error {
+const GeneralError = require('./GeneralError');
+
+class AuthorizationError extends GeneralError {
 	constructor(message) {
 		super(message);
 	}

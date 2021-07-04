@@ -4,6 +4,7 @@ const Express = require('express');
 const app = Express();
 
 const controllers = require('./controllers');
+const middleware = require('./middleware');
 const middlewares = require('./middleware');
 
 app.use(Express.json());
@@ -15,5 +16,8 @@ app.use('/ping', (req, res) => {
 
 app.use('/users', controllers.user);
 app.use('/recitals', middlewares.authenticateToken, controllers.recital);
+
+//handle errors last
+app.use(middleware.handleError);
 
 module.exports = app;
