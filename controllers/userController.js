@@ -1,10 +1,5 @@
 const models = require('../models');
-const { UniqueConstraintError } = require('sequelize/lib/errors');
-const {
-	AuthorizationError,
-	InvalidRequestError,
-	GeneralError,
-} = require('../errors');
+const { AuthorizationError, InvalidRequestError } = require('../errors');
 const { Router } = require('express');
 
 const bcrypt = require('bcryptjs');
@@ -37,17 +32,16 @@ userController.post('/register', async (req, res, next) => {
 			token,
 		});
 	} catch (error) {
-		console.log('******* ERROR CAUGHT ********');
-		if (error instanceof GeneralError) console.log(error.getCode());
 		next(error);
 	}
 });
 
-userController.post('/login', async (req, res) => {
+userController.post('/login', async (req, res, next) => {
 	try {
 		const { email, password } = req.body;
 
-		if (!email || !password) throw new Error('Credentials missing');
+		if (!email || !password)
+			throw new InvalidRequestError('Please provide email and password');
 
 		const user = await models.user.findOne({
 			where: {
@@ -55,7 +49,8 @@ userController.post('/login', async (req, res) => {
 			},
 		});
 
-		if (user === null) throw new AuthorizationError('No user found');
+		if (user === null)
+			throw new AuthorizationError('Incorrect email or password');
 
 		if (bcrypt.compareSync(password, user.password)) {
 			const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
@@ -65,20 +60,10 @@ userController.post('/login', async (req, res) => {
 				token,
 			});
 		} else {
-			throw new AuthorizationError('Incorrect password');
+			throw new AuthorizationError('Incorrect email or password');
 		}
 	} catch (error) {
-		if (error.message === 'Credentials missing') {
-			res.status(400).json({
-				message: 'Please provide email and password',
-			});
-		} else if (error instanceof AuthorizationError) {
-			res.status(401).json({
-				message: 'Incorrect email or password',
-			});
-		} else {
-			res.status(500).send();
-		}
+		next(error);
 	}
 });
 

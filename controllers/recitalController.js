@@ -11,12 +11,13 @@ recitalController.get('/ping', (req, res) => {
 
 recitalController
 	.route('/')
-	.post(async (req, res) => {
+	.post(async (req, res, next) => {
 		try {
 			const { name, date, location, description } = req.body;
 			const { id: organizerId } = req.user;
 
-			if (!name) throw new InvalidRequestError('Name not provided');
+			if (!name)
+				throw new InvalidRequestError('Recital name must be provided');
 
 			const newRecital = await models.recital.create({
 				name,
@@ -30,16 +31,10 @@ recitalController
 				recital: newRecital,
 			});
 		} catch (error) {
-			if (error instanceof InvalidRequestError) {
-				res.status(400).json({
-					message: 'Recital name must be provided',
-				});
-			} else {
-				res.status(500).send();
-			}
+			next(error);
 		}
 	})
-	.get(async (req, res) => {
+	.get(async (req, res, next) => {
 		try {
 			const { id: organizerId } = req.user;
 
@@ -54,19 +49,20 @@ recitalController
 				count: recitals.length,
 			});
 		} catch (error) {
-			res.status(500).send();
+			next(error);
 		}
 	});
 
 recitalController
 	.route('/:recitalId')
-	.put(async (req, res) => {
+	.put(async (req, res, next) => {
 		try {
 			const { name, date, location, description } = req.body;
 			const { id: organizerId } = req.user;
 			const { recitalId } = req.params;
 
-			if (!name) throw new InvalidRequestError('Name must be provided');
+			if (!name)
+				throw new InvalidRequestError('Recital name must be provided');
 
 			const [count, updatedRecital] = await models.recital.update(
 				{
@@ -85,27 +81,18 @@ recitalController
 			);
 
 			if (count === 0)
-				throw new NotFoundError('No recital with id found');
+				throw new NotFoundError(
+					'No recital with given id found for user'
+				);
 
 			res.status(200).json({
 				recital: updatedRecital,
 			});
 		} catch (error) {
-			if (error instanceof NotFoundError) {
-				res.status(404).json({
-					message: 'No recital with given id found for user',
-				});
-			} else if (error instanceof InvalidRequestError) {
-				res.status(400).json({
-					message: 'Recital name must be provided',
-				});
-			} else {
-				console.error(error);
-				res.status(500).send();
-			}
+			next(error);
 		}
 	})
-	.patch(async (req, res) => {
+	.patch(async (req, res, next) => {
 		try {
 			const { recitalId } = req.params;
 			const { id: organizerId } = req.user;
@@ -133,27 +120,18 @@ recitalController
 			);
 
 			if (count === 0)
-				throw new NotFoundError('No recital with id found');
+				throw new NotFoundError(
+					'No recital with given id found for user'
+				);
 
 			res.status(200).json({
 				recital: patchedRecital[0],
 			});
 		} catch (error) {
-			if (error instanceof NotFoundError) {
-				res.status(404).json({
-					message: 'No recital with given id found for user',
-				});
-			} else if (error instanceof InvalidRequestError) {
-				res.status(400).json({
-					message: 'No information provided',
-				});
-			} else {
-				console.error(error);
-				res.status(500).send();
-			}
+			next(error);
 		}
 	})
-	.get(async (req, res) => {
+	.get(async (req, res, next) => {
 		try {
 			const { recitalId } = req.params;
 			const { id: organizerId } = req.user;
@@ -174,16 +152,10 @@ recitalController
 				recital,
 			});
 		} catch (error) {
-			if (error instanceof NotFoundError) {
-				res.status(404).json({
-					message: error.message,
-				});
-			} else {
-				res.status(500).send();
-			}
+			next(error);
 		}
 	})
-	.delete(async (req, res) => {
+	.delete(async (req, res, next) => {
 		try {
 			const { recitalId } = req.params;
 			const { id: organizerId } = req.user;
@@ -204,13 +176,7 @@ recitalController
 
 			res.status(204).send();
 		} catch (error) {
-			if (error instanceof NotFoundError) {
-				res.status(404).json({
-					message: error.message,
-				});
-			} else {
-				res.status(500).send();
-			}
+			next(error);
 		}
 	});
 

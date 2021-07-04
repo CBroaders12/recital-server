@@ -1,9 +1,5 @@
 const GeneralError = require('./GeneralError');
 
-class InvalidRequestError extends GeneralError {
-	constructor(message) {
-		super(message);
-	}
-}
+class InvalidRequestError extends GeneralError {}
 
 module.exports = InvalidRequestError;
