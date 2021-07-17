@@ -497,6 +497,59 @@
 						"description": "The larger work or set the song is a part of (if applicable)"
 					}
 				}
+			},
+			"Songs": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/Song"
+				}
+			},
+			"PatchSong": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "integer",
+						"format": "int32",
+						"description": "The song id"
+					},
+					"title": {
+						"type": "string",
+						"description": "The title of the piece in the original language"
+					},
+					"composer": {
+						"type": "string",
+						"description": "Full name of the composer"
+					},
+					"author": {
+						"type": "string",
+						"description": "The author of the text"
+					},
+					"language": {
+						"type": "string",
+						"description": "The original language of the song"
+					},
+					"composition-year": {
+						"type": "integer",
+						"format": "int64",
+						"description": "The approximate year the song was composed"
+					},
+					"original-key": {
+						"type": "string",
+						"description": "The original key of the song"
+					},
+					"catalogue-number": {
+						"type": "string",
+						"description": "The catalogue number of the song"
+					},
+					"period": {
+						"type": "string",
+						"description": "The stylistic period the song is most often identified with"
+					},
+					"from": {
+						"type": "string",
+						"description": "The larger work or set the song is a part of (if applicable)"
+					}
+				}
 			}
 		},
 		"responses": {

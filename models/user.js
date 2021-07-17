@@ -9,6 +9,11 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
+		role: {
+			type: DataTypes.ENUM(['User', 'Admin']),
+			allowNull: false,
+			defaultValue: 'User',
+		},
 	});
 
 	User.associate = (models) => {
