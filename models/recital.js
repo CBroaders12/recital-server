@@ -18,5 +18,11 @@ module.exports = (sequelize, DataTypes) => {
 		},
 	});
 
+	Recital.associate = (models) => {
+		Recital.belongsToMany(models.song, {
+			through: models.recital_song,
+		});
+	};
+
 	return Recital;
 };
