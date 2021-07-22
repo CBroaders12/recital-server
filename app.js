@@ -17,6 +17,9 @@ app.use('/ping', (req, res) => {
 app.use('/users', controllers.user);
 app.use('/recitals', middlewares.authenticateToken, controllers.recital);
 
+// TODO: Add admin control to routes under here
+app.use('/songs', middlewares.authenticateToken, controllers.song);
+
 //handle errors last
 app.use(middleware.handleError);
 

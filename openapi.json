@@ -349,6 +349,15 @@
 								}
 							}
 						}
+					},
+					"401": {
+						"$ref": "#/components/responses/UnauthorizedError"
+					},
+					"403": {
+						"$ref": "#/components/responses/ForbiddenError"
+					},
+					"404": {
+						"$ref": "#/components/responses/NotFoundError"
 					}
 				}
 			}
@@ -561,6 +570,9 @@
 			},
 			"NotFoundError": {
 				"description": "Requested asset not found"
+			},
+			"ForbiddenError": {
+				"description": "Lack permissions for requested route"
 			}
 		},
 		"securitySchemes": {
