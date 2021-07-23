@@ -52,3 +52,21 @@ describe('/songs/ POST - add song endpoint', () => {
 
 	it.todo('Missing admin access - returns 403 status and error message');
 });
+
+describe('/songs/{songId} PATCH - update song endpoint', () => {
+	it.todo('Successful request - returns 200 status and song object');
+
+	it.todo('Missing or invalid token - returns 401 status and error message');
+
+	it.todo('Missing admin access - returns 403 status and error message');
+});
+
+describe('/songs/{songId} DELETE - delete song endpoint', () => {
+	it.todo('Successful request - returns 204 status and success message');
+
+	it.todo('Invalid songId - returns 404 status and error message');
+
+	it.todo('Missing or invalid token - returns 401 status and error message');
+
+	it.todo('Missing admin access - returns 403 status and error message');
+});
