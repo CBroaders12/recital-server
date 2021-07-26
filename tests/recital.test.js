@@ -7,38 +7,18 @@ const {
 	loginUser,
 } = require('./testHelpers');
 
-const testData = {
-	testUser: {
-		email: 'test@email.com',
-		password: 'IAmAPassword',
-	},
-	validRecital: {
-		name: 'Test Recital',
-		date: '2021-09-01',
-		location: 'Test Location',
-		description: 'I am but a humble test',
-	},
-	missingName: {
-		date: '2021-09-01',
-		location: 'Test Location',
-		description: "I am bad request. Don't use me",
-	},
-	replacementRecital: {
-		name: 'Another Recital',
-		date: '2021-12-01',
-		location: 'Somewhere',
-		description: 'We had to change the recital',
-	},
-	patchRecital: {
-		date: '2021-09-05',
-		description: 'We only had to change the date',
-	},
-	emptyRecital: {},
-};
+const {
+	validUser1,
+	validRecital,
+	missingRecitalName,
+	patchRecital,
+	replacementRecital,
+	emptyRecital,
+} = require('./testData');
 
 beforeAll(async () => {
 	await startTestDB();
-	await registerUser(testData.testUser);
+	await registerUser(validUser1);
 });
 
 afterAll(async () => {
@@ -49,7 +29,7 @@ describe('/recitals/ping GET - check recital endpoint', () => {
 	it('returns 200 status', async () => {
 		const {
 			body: { token },
-		} = await loginUser(testData.testUser);
+		} = await loginUser(validUser1);
 		const response = await request(app)
 			.get('/recitals/ping')
 			.set('Authorization', `Bearer ${token}`);
@@ -72,12 +52,12 @@ describe('/recitals POST - create a new recital for user', () => {
 	it('Successful request - returns 201 and the recital object', async () => {
 		const {
 			body: { token },
-		} = await loginUser(testData.testUser);
+		} = await loginUser(validUser1);
 
 		const response = await request(app)
 			.post('/recitals')
 			.set('Authorization', `Bearer ${token}`)
-			.send(testData.validRecital);
+			.send(validRecital);
 
 		expect(response.statusCode).toBe(201);
 		expect(response.body).toHaveProperty('recital');
@@ -86,7 +66,7 @@ describe('/recitals POST - create a new recital for user', () => {
 	it('Missing or invalid token - returns 401 status and error message', async () => {
 		const response = await request(app)
 			.post('/recitals')
-			.send(testData.validRecital);
+			.send(validRecital);
 
 		expect(response.statusCode).toBe(401);
 		expect(response.body).toHaveProperty(
@@ -98,12 +78,12 @@ describe('/recitals POST - create a new recital for user', () => {
 	it('Missing recital name - returns 400 status and error message', async () => {
 		const {
 			body: { token },
-		} = await loginUser(testData.testUser);
+		} = await loginUser(validUser1);
 
 		const response = await request(app)
 			.post('/recitals')
 			.set('Authorization', `Bearer ${token}`)
-			.send(testData.missingName);
+			.send(missingRecitalName);
 
 		expect(response.statusCode).toBe(400);
 		expect(response.body).toHaveProperty(
@@ -117,7 +97,7 @@ describe("/recitals GET - return all of a user's recitals", () => {
 	it("Successful request - returns 200 status and array of user's recitals", async () => {
 		const {
 			body: { token },
-		} = await loginUser(testData.testUser);
+		} = await loginUser(validUser1);
 
 		const response = await request(app)
 			.get('/recitals')
@@ -143,12 +123,12 @@ describe('/recitals/{recitalId} PUT - replace recital with given recitalId', () 
 	it('Successful request - returns 200 status and recital object', async () => {
 		const {
 			body: { token },
-		} = await loginUser(testData.testUser);
+		} = await loginUser(validUser1);
 
 		const response = await request(app)
 			.put('/recitals/1')
 			.set('Authorization', token)
-			.send(testData.replacementRecital);
+			.send(replacementRecital);
 
 		expect(response.statusCode).toBe(200);
 		expect(response.body).toHaveProperty('recital');
@@ -157,12 +137,12 @@ describe('/recitals/{recitalId} PUT - replace recital with given recitalId', () 
 	it('Missing required fields - returns 400 status and error message', async () => {
 		const {
 			body: { token },
-		} = await loginUser(testData.testUser);
+		} = await loginUser(validUser1);
 
 		const response = await request(app)
 			.put('/recitals/1')
 			.set('Authorization', token)
-			.send(testData.missingName);
+			.send(missingRecitalName);
 
 		expect(response.statusCode).toBe(400);
 		expect(response.body).toHaveProperty(
@@ -174,12 +154,12 @@ describe('/recitals/{recitalId} PUT - replace recital with given recitalId', () 
 	it('Invalid recitalId - returns 404 status and error message', async () => {
 		const {
 			body: { token },
-		} = await loginUser(testData.testUser);
+		} = await loginUser(validUser1);
 
 		const response = await request(app)
 			.put('/recitals/2')
 			.set('Authorization', token)
-			.send(testData.replacementRecital);
+			.send(replacementRecital);
 
 		expect(response.statusCode).toBe(404);
 		expect(response.body).toHaveProperty(
@@ -191,7 +171,7 @@ describe('/recitals/{recitalId} PUT - replace recital with given recitalId', () 
 	it('Missing or invalid token - returns 401 status and error message', async () => {
 		const response = await request(app)
 			.put('/recitals/1')
-			.send(testData.missingName);
+			.send(missingRecitalName);
 
 		expect(response.statusCode).toBe(401);
 		expect(response.body).toHaveProperty(
@@ -205,29 +185,27 @@ describe('/recitals/{recitalId} PATCH - update recital with given recitalId', ()
 	it('Successful request - returns 200 status and recital object', async () => {
 		const {
 			body: { token },
-		} = await loginUser(testData.testUser);
+		} = await loginUser(validUser1);
 
 		const response = await request(app)
 			.patch('/recitals/1')
 			.set('Authorization', token)
-			.send(testData.patchRecital);
+			.send(patchRecital);
 
 		expect(response.statusCode).toBe(200);
 		expect(response.body).toHaveProperty('recital');
-		expect(response.body.recital.name).toBe(
-			testData.replacementRecital.name
-		);
+		expect(response.body.recital.name).toBe(replacementRecital.name);
 	});
 
 	it('No info to update provided - returns 400 status and error message', async () => {
 		const {
 			body: { token },
-		} = await loginUser(testData.testUser);
+		} = await loginUser(validUser1);
 
 		const response = await request(app)
 			.patch('/recitals/1')
 			.set('Authorization', token)
-			.send(testData.emptyRecital);
+			.send(emptyRecital);
 
 		expect(response.statusCode).toBe(400);
 		expect(response.body).toHaveProperty(
@@ -239,12 +217,12 @@ describe('/recitals/{recitalId} PATCH - update recital with given recitalId', ()
 	it('Invalid recitalId - returns 404 status and error message', async () => {
 		const {
 			body: { token },
-		} = await loginUser(testData.testUser);
+		} = await loginUser(validUser1);
 
 		const response = await request(app)
 			.patch('/recitals/2')
 			.set('Authorization', token)
-			.send(testData.patchRecital);
+			.send(patchRecital);
 
 		expect(response.statusCode).toBe(404);
 		expect(response.body).toHaveProperty(
@@ -256,7 +234,7 @@ describe('/recitals/{recitalId} PATCH - update recital with given recitalId', ()
 	it('Missing or invalid token - returns 401 status and error message', async () => {
 		const response = await request(app)
 			.patch('/recitals/1')
-			.send(testData.missingName);
+			.send(missingRecitalName);
 
 		expect(response.statusCode).toBe(401);
 		expect(response.body).toHaveProperty(
@@ -270,7 +248,7 @@ describe('recitals/{recitalId} GET - return recital with given recitalId', () =>
 	it('Successful request - returns 200 status and recital object', async () => {
 		const {
 			body: { token },
-		} = await loginUser(testData.testUser);
+		} = await loginUser(validUser1);
 
 		const response = await request(app)
 			.get('/recitals/1')
@@ -293,7 +271,7 @@ describe('recitals/{recitalId} GET - return recital with given recitalId', () =>
 	it('Invalid recitalId - returns 404 status and error message', async () => {
 		const {
 			body: { token },
-		} = await loginUser(testData.testUser);
+		} = await loginUser(validUser1);
 
 		const response = await request(app)
 			.get('/recitals/2')
@@ -311,7 +289,7 @@ describe('/recitals/{recitalId} DELETE - delete recital with given recitalId', (
 	it('Successful request - returns 204 status and success message', async () => {
 		const {
 			body: { token },
-		} = await loginUser(testData.testUser);
+		} = await loginUser(validUser1);
 
 		const response = await request(app)
 			.delete('/recitals/1')
@@ -333,7 +311,7 @@ describe('/recitals/{recitalId} DELETE - delete recital with given recitalId', (
 	it('Invalid recitalId - returns 404 status and error message', async () => {
 		const {
 			body: { token },
-		} = await loginUser(testData.testUser);
+		} = await loginUser(validUser1);
 
 		const response = await request(app)
 			.delete('/recitals/2')

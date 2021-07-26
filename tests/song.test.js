@@ -8,21 +8,12 @@ const {
 	createAdmin,
 } = require('./testHelpers');
 
-const testData = {
-	testUser: {
-		email: 'test@email.com',
-		password: 'IAmAPassword',
-	},
-	testAdmin: {
-		email: 'admin@email.com',
-		password: 'AdminPassword',
-	},
-};
+const { validUser1, adminUser } = require('./testData');
 
 beforeAll(async () => {
 	await startTestDB();
-	await registerUser(testData.testUser);
-	await createAdmin(testData.testAdmin);
+	await registerUser(validUser1);
+	await createAdmin(adminUser);
 });
 
 afterAll(async () => {
@@ -33,7 +24,7 @@ describe('/songs/ping GET - check song endpoint', () => {
 	it('returns 200 status', async () => {
 		const {
 			body: { token },
-		} = await loginUser(testData.testAdmin);
+		} = await loginUser(adminUser);
 
 		const response = await request(app)
 			.get('/songs/ping')
@@ -55,7 +46,7 @@ describe('/songs/ping GET - check song endpoint', () => {
 	it('Missing admin access - returns 403 status and error message', async () => {
 		const {
 			body: { token },
-		} = await loginUser(testData.testUser);
+		} = await loginUser(validUser1);
 
 		const response = await request(app)
 			.get('/songs/ping')
