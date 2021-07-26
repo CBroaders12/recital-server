@@ -24,4 +24,10 @@ helpers.loginUser = async (testUser) => {
 	return response;
 };
 
+helpers.createAdmin = async (newAdmin) => {
+	const response = await request(app).post('/users/admin').send(newAdmin);
+
+	return response;
+};
+
 module.exports = helpers;

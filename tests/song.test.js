@@ -5,6 +5,7 @@ const {
 	registerUser,
 	closeTestDB,
 	loginUser,
+	createAdmin,
 } = require('./testHelpers');
 
 const testData = {
@@ -12,11 +13,16 @@ const testData = {
 		email: 'test@email.com',
 		password: 'IAmAPassword',
 	},
+	testAdmin: {
+		email: 'admin@email.com',
+		password: 'AdminPassword',
+	},
 };
 
 beforeAll(async () => {
 	await startTestDB();
 	await registerUser(testData.testUser);
+	await createAdmin(testData.testAdmin);
 });
 
 afterAll(async () => {
@@ -27,7 +33,7 @@ describe('/songs/ping GET - check song endpoint', () => {
 	it('returns 200 status', async () => {
 		const {
 			body: { token },
-		} = await loginUser(testData.testUser);
+		} = await loginUser(testData.testAdmin);
 
 		const response = await request(app)
 			.get('/songs/ping')
@@ -36,9 +42,31 @@ describe('/songs/ping GET - check song endpoint', () => {
 		expect(response.statusCode).toBe(200);
 	});
 
-	it.todo('Missing or invalid token - returns 401 status and error message');
+	it('Missing or invalid token - returns 401 status and error message', async () => {
+		const response = await request(app).get('/songs/ping');
 
-	it.todo('Missing admin access - returns 403 status and error message');
+		expect(response.statusCode).toBe(401);
+		expect(response.body).toHaveProperty(
+			'message',
+			'Missing or invalid token'
+		);
+	});
+
+	it('Missing admin access - returns 403 status and error message', async () => {
+		const {
+			body: { token },
+		} = await loginUser(testData.testUser);
+
+		const response = await request(app)
+			.get('/songs/ping')
+			.set('Authorization', `Bearer ${token}`);
+
+		expect(response.statusCode).toBe(403);
+		expect(response.body).toHaveProperty(
+			'message',
+			'Insufficient permissions'
+		);
+	});
 });
 
 describe('/songs/ POST - add song endpoint', () => {

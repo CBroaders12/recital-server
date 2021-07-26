@@ -8,7 +8,7 @@ const validateToken = async (req, res, next) => {
 	}
 	try {
 		if (!req.headers.authorization)
-			throw new AuthorizationError('No token provided');
+			throw new AuthorizationError('Missing or invalid token');
 
 		const { authorization } = req.headers;
 
@@ -26,13 +26,7 @@ const validateToken = async (req, res, next) => {
 		req.user = user;
 		next();
 	} catch (error) {
-		if (error instanceof AuthorizationError) {
-			res.status(401).json({
-				message: 'Missing or invalid token',
-			});
-		} else {
-			res.status(500).send();
-		}
+		next(error);
 	}
 };
 
