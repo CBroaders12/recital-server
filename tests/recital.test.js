@@ -8,12 +8,14 @@ const {
 } = require('./testHelpers');
 
 const {
-	validUser1,
-	validRecital,
-	missingRecitalName,
-	patchRecital,
-	replacementRecital,
-	emptyRecital,
+	users: { validUser1 },
+	recitals: {
+		validRecital,
+		missingRecitalName,
+		patchRecital,
+		replacementRecital,
+		emptyRecital,
+	},
 } = require('./testData');
 
 beforeAll(async () => {

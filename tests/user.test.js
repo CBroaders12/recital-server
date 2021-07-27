@@ -4,11 +4,13 @@ const request = require('supertest');
 const { startTestDB, closeTestDB, registerUser } = require('./testHelpers');
 
 const {
-	validUser1,
-	incorrectEmail,
-	incorrectPassword,
-	missingEmail,
-	missingPassword,
+	users: {
+		validUser1,
+		incorrectEmail,
+		incorrectPassword,
+		missingEmail,
+		missingPassword,
+	},
 } = require('./testData');
 
 beforeAll(async () => {

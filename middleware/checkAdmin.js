@@ -5,7 +5,8 @@ const checkAdmin = (req, res, next) => {
 		if (req.method === 'OPTIONS' || req.user.role === 'admin') {
 			next();
 		}
-		throw new PermissionsError('Insufficient permissions');
+		if (req.user.role !== 'admin')
+			throw new PermissionsError('Insufficient permissions');
 	} catch (error) {
 		next(error);
 	}

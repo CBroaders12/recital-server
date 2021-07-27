@@ -8,7 +8,10 @@ const {
 	createAdmin,
 } = require('./testHelpers');
 
-const { validUser1, adminUser } = require('./testData');
+const {
+	users: { validUser1, adminUser },
+	songs: { validSong, validSongWithSet, missingTitle },
+} = require('./testData');
 
 beforeAll(async () => {
 	await startTestDB();
@@ -61,15 +64,65 @@ describe('/songs/ping GET - check song endpoint', () => {
 });
 
 describe('/songs/ POST - add song endpoint', () => {
-	it.todo('Successful request - returns 201 status and song object');
+	it('Successful request - returns 201 status and song object', async () => {
+		const {
+			body: { token },
+		} = await loginUser(adminUser);
 
-	it.todo(
-		'Missing required information - returns 400 status and error message'
-	);
+		const response = await request(app)
+			.post('/songs')
+			.set('Authorization', `Bearer ${token}`)
+			.send(validSong);
 
-	it.todo('Missing or invalid token - returns 401 status and error message');
+		// console.log(response);
 
-	it.todo('Missing admin access - returns 403 status and error message');
+		expect(response.statusCode).toBe(201);
+		expect(response.body).toHaveProperty('song');
+	});
+
+	it('Missing required information - returns 400 status and error message', async () => {
+		const {
+			body: { token },
+		} = await loginUser(adminUser);
+
+		const response = await request(app)
+			.post('/songs')
+			.set('Authorization', `Bearer ${token}`)
+			.send(missingTitle);
+
+		expect(response.statusCode).toBe(400);
+		expect(response.body).toHaveProperty(
+			'message',
+			'Song missing required information'
+		);
+	});
+
+	it('Missing or invalid token - returns 401 status and error message', async () => {
+		const response = await request(app).post('/songs').send(validSong);
+
+		expect(response.statusCode).toBe(401);
+		expect(response.body).toHaveProperty(
+			'message',
+			'Missing or invalid token'
+		);
+	});
+
+	it('Missing admin access - returns 403 status and error message', async () => {
+		const {
+			body: { token },
+		} = await loginUser(validUser1);
+
+		const response = await request(app)
+			.post('/song')
+			.set('Authorization', `Bearer ${token}`)
+			.send(validSongWithSet);
+
+		expect(response.statusCode).toBe(403);
+		expect(response.body).toHaveProperty(
+			'message',
+			'Insufficient permissions'
+		);
+	});
 });
 
 describe('/songs/{songId} PATCH - update song endpoint', () => {
