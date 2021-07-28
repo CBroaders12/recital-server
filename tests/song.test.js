@@ -6,12 +6,17 @@ const {
 	closeTestDB,
 	loginUser,
 	createAdmin,
-	badPermissionsRequest,
 } = require('./testHelpers');
 
 const {
 	users: { validUser1, adminUser },
-	songs: { validSong, validSongWithSet, missingTitle, patchSong },
+	songs: {
+		validSong,
+		validSongWithSet,
+		missingTitle,
+		patchSong,
+		malformedSong,
+	},
 } = require('./testData');
 
 beforeAll(async () => {
@@ -131,6 +136,21 @@ describe('/songs/{songId} PATCH - update song endpoint', () => {
 
 		expect(response.statusCode).toBe(200);
 		expect(response.body).toHaveProperty('song');
+	});
+
+	it('Invalid songId - returns 404 status and error message', async () => {
+		const token = await loginUser(adminUser);
+
+		const response = await request(app)
+			.patch('/songs/100')
+			.set('Authorization', `Bearer ${token}`)
+			.send(patchSong);
+
+		expect(response.statusCode).toBe(404);
+		expect(response.body).toHaveProperty(
+			'message',
+			'No song with given id found'
+		);
 	});
 
 	it('Missing or invalid token - returns 401 status and error message', async () => {
