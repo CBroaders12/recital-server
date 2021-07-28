@@ -15,19 +15,19 @@ helpers.closeTestDB = async () => {
 helpers.registerUser = async (testUser) => {
 	const response = await request(app).post('/users/register').send(testUser);
 
-	return response;
+	return response.body.token;
 };
 
 helpers.loginUser = async (testUser) => {
 	const response = await request(app).post('/users/login').send(testUser);
 
-	return response;
+	return response.body.token;
 };
 
 helpers.createAdmin = async (newAdmin) => {
 	const response = await request(app).post('/users/admin').send(newAdmin);
 
-	return response;
+	return response.body.token;
 };
 
 module.exports = helpers;

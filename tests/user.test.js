@@ -130,6 +130,7 @@ describe('/users/login POST - log in user', () => {
 		const response = await request(app)
 			.post('/users/login')
 			.send(missingEmail);
+
 		expect(response.statusCode).toBe(400);
 		expect(response.body).toHaveProperty(
 			'message',

@@ -83,5 +83,12 @@ module.exports = {
 			period: 'Romantic',
 			from: 'Winterreise',
 		},
+		patchSong: {
+			title: 'Du bist die Ruh',
+			author: 'Friedrich Rückert',
+			compositionYear: 1823,
+			originalKey: 'E-flat major',
+			catalogueNumber: 'D776',
+		},
 	},
 };

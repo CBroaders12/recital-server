@@ -29,9 +29,7 @@ afterAll(async () => {
 
 describe('/recitals/ping GET - check recital endpoint', () => {
 	it('returns 200 status', async () => {
-		const {
-			body: { token },
-		} = await loginUser(validUser1);
+		const token = await loginUser(validUser1);
 		const response = await request(app)
 			.get('/recitals/ping')
 			.set('Authorization', `Bearer ${token}`);
@@ -52,9 +50,7 @@ describe('/recitals/ping GET - check recital endpoint', () => {
 
 describe('/recitals POST - create a new recital for user', () => {
 	it('Successful request - returns 201 and the recital object', async () => {
-		const {
-			body: { token },
-		} = await loginUser(validUser1);
+		const token = await loginUser(validUser1);
 
 		const response = await request(app)
 			.post('/recitals')
@@ -78,9 +74,7 @@ describe('/recitals POST - create a new recital for user', () => {
 	});
 
 	it('Missing recital name - returns 400 status and error message', async () => {
-		const {
-			body: { token },
-		} = await loginUser(validUser1);
+		const token = await loginUser(validUser1);
 
 		const response = await request(app)
 			.post('/recitals')
@@ -97,9 +91,7 @@ describe('/recitals POST - create a new recital for user', () => {
 
 describe("/recitals GET - return all of a user's recitals", () => {
 	it("Successful request - returns 200 status and array of user's recitals", async () => {
-		const {
-			body: { token },
-		} = await loginUser(validUser1);
+		const token = await loginUser(validUser1);
 
 		const response = await request(app)
 			.get('/recitals')
@@ -123,9 +115,7 @@ describe("/recitals GET - return all of a user's recitals", () => {
 
 describe('/recitals/{recitalId} PUT - replace recital with given recitalId', () => {
 	it('Successful request - returns 200 status and recital object', async () => {
-		const {
-			body: { token },
-		} = await loginUser(validUser1);
+		const token = await loginUser(validUser1);
 
 		const response = await request(app)
 			.put('/recitals/1')
@@ -137,9 +127,7 @@ describe('/recitals/{recitalId} PUT - replace recital with given recitalId', () 
 	});
 
 	it('Missing required fields - returns 400 status and error message', async () => {
-		const {
-			body: { token },
-		} = await loginUser(validUser1);
+		const token = await loginUser(validUser1);
 
 		const response = await request(app)
 			.put('/recitals/1')
@@ -154,9 +142,7 @@ describe('/recitals/{recitalId} PUT - replace recital with given recitalId', () 
 	});
 
 	it('Invalid recitalId - returns 404 status and error message', async () => {
-		const {
-			body: { token },
-		} = await loginUser(validUser1);
+		const token = await loginUser(validUser1);
 
 		const response = await request(app)
 			.put('/recitals/2')
@@ -185,9 +171,7 @@ describe('/recitals/{recitalId} PUT - replace recital with given recitalId', () 
 
 describe('/recitals/{recitalId} PATCH - update recital with given recitalId', () => {
 	it('Successful request - returns 200 status and recital object', async () => {
-		const {
-			body: { token },
-		} = await loginUser(validUser1);
+		const token = await loginUser(validUser1);
 
 		const response = await request(app)
 			.patch('/recitals/1')
@@ -200,9 +184,7 @@ describe('/recitals/{recitalId} PATCH - update recital with given recitalId', ()
 	});
 
 	it('No info to update provided - returns 400 status and error message', async () => {
-		const {
-			body: { token },
-		} = await loginUser(validUser1);
+		const token = await loginUser(validUser1);
 
 		const response = await request(app)
 			.patch('/recitals/1')
@@ -217,9 +199,7 @@ describe('/recitals/{recitalId} PATCH - update recital with given recitalId', ()
 	});
 
 	it('Invalid recitalId - returns 404 status and error message', async () => {
-		const {
-			body: { token },
-		} = await loginUser(validUser1);
+		const token = await loginUser(validUser1);
 
 		const response = await request(app)
 			.patch('/recitals/2')
@@ -248,9 +228,7 @@ describe('/recitals/{recitalId} PATCH - update recital with given recitalId', ()
 
 describe('recitals/{recitalId} GET - return recital with given recitalId', () => {
 	it('Successful request - returns 200 status and recital object', async () => {
-		const {
-			body: { token },
-		} = await loginUser(validUser1);
+		const token = await loginUser(validUser1);
 
 		const response = await request(app)
 			.get('/recitals/1')
@@ -271,9 +249,7 @@ describe('recitals/{recitalId} GET - return recital with given recitalId', () =>
 	});
 
 	it('Invalid recitalId - returns 404 status and error message', async () => {
-		const {
-			body: { token },
-		} = await loginUser(validUser1);
+		const token = await loginUser(validUser1);
 
 		const response = await request(app)
 			.get('/recitals/2')
@@ -289,9 +265,7 @@ describe('recitals/{recitalId} GET - return recital with given recitalId', () =>
 
 describe('/recitals/{recitalId} DELETE - delete recital with given recitalId', () => {
 	it('Successful request - returns 204 status and success message', async () => {
-		const {
-			body: { token },
-		} = await loginUser(validUser1);
+		const token = await loginUser(validUser1);
 
 		const response = await request(app)
 			.delete('/recitals/1')
@@ -311,9 +285,7 @@ describe('/recitals/{recitalId} DELETE - delete recital with given recitalId', (
 	});
 
 	it('Invalid recitalId - returns 404 status and error message', async () => {
-		const {
-			body: { token },
-		} = await loginUser(validUser1);
+		const token = await loginUser(validUser1);
 
 		const response = await request(app)
 			.delete('/recitals/2')
