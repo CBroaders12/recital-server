@@ -10,13 +10,7 @@ const {
 
 const {
 	users: { validUser1, adminUser },
-	songs: {
-		validSong,
-		validSongWithSet,
-		missingTitle,
-		patchSong,
-		malformedSong,
-	},
+	songs: { validSong, validSongWithSet, missingTitle, patchSong },
 } = require('./testData');
 
 beforeAll(async () => {
@@ -180,11 +174,53 @@ describe('/songs/{songId} PATCH - update song endpoint', () => {
 });
 
 describe('/songs/{songId} DELETE - delete song endpoint', () => {
-	it.todo('Successful request - returns 204 status and success message');
+	const testPath = '/songs/1';
 
-	it.todo('Invalid songId - returns 404 status and error message');
+	it('Successful request - returns 204 status and success message', async () => {
+		const token = await loginUser(adminUser);
 
-	it.todo('Missing or invalid token - returns 401 status and error message');
+		const response = await request(app)
+			.delete(testPath)
+			.set('Authorization', `Bearer ${token}`);
 
-	it.todo('Missing admin access - returns 403 status and error message');
+		expect(response.statusCode).toBe(204);
+	});
+
+	it('Invalid songId - returns 404 status and error message', async () => {
+		const token = await loginUser(adminUser);
+
+		const response = await request(app)
+			.delete('/songs/100')
+			.set('Authorization', `Bearer ${token}`);
+
+		expect(response.statusCode).toBe(404);
+		expect(response.body).toHaveProperty(
+			'message',
+			'No song with given id found'
+		);
+	});
+
+	it('Missing or invalid token - returns 401 status and error message', async () => {
+		const response = await request(app).delete(testPath);
+
+		expect(response.statusCode).toBe(401);
+		expect(response.body).toHaveProperty(
+			'message',
+			'Missing or invalid token'
+		);
+	});
+
+	it('Missing admin access - returns 403 status and error message', async () => {
+		const token = await loginUser(validUser1);
+
+		const response = await request(app)
+			.delete(testPath)
+			.set('Authorization', `Bearer ${token}`);
+
+		expect(response.statusCode).toBe(403);
+		expect(response.body).toHaveProperty(
+			'message',
+			'Insufficient permissions'
+		);
+	});
 });
