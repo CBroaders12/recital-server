@@ -155,7 +155,7 @@ Responses follow [JSend](https://github.com/omniti-labs/jsend) documentation
 
 ```json
 {
-	"_path_": "/recitals/2"
+	"_path_": "/recitals/2",
 	"status": "success",
 	"data": {
 		"recital": {
@@ -347,7 +347,7 @@ Responses follow [JSend](https://github.com/omniti-labs/jsend) documentation
 
 ```json
 {
-	"_path_": "/admin/songs/1"
+	"_path_": "/admin/songs/1",
 	"song": {
 		"title": "Erlkönig",
 		"author": "Johann Goethe",
