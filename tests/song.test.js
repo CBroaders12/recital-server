@@ -23,8 +23,8 @@ afterAll(async () => {
 	await closeTestDB();
 });
 
-describe('/songs/ping GET - check song endpoint', () => {
-	const testPath = '/songs/ping';
+describe('/admin/songs/ping GET - check song endpoint', () => {
+	const testPath = '/admin/songs/ping';
 
 	it('returns 200 status', async () => {
 		const token = await loginUser(adminUser);
@@ -61,8 +61,8 @@ describe('/songs/ping GET - check song endpoint', () => {
 	});
 });
 
-describe('/songs/ POST - add song endpoint', () => {
-	const testPath = '/songs';
+describe('admin/songs POST - add song endpoint', () => {
+	const testPath = '/admin/songs';
 
 	it('Successful request - returns 201 status and song object', async () => {
 		const token = await loginUser(adminUser);
@@ -105,7 +105,7 @@ describe('/songs/ POST - add song endpoint', () => {
 		const token = await loginUser(validUser1);
 
 		const response = await request(app)
-			.post('/song')
+			.post(testPath)
 			.set('Authorization', `Bearer ${token}`)
 			.send(validSongWithSet);
 
@@ -117,14 +117,14 @@ describe('/songs/ POST - add song endpoint', () => {
 	});
 });
 
-describe('/songs/{songId} PATCH - update song endpoint', () => {
-	const testPath = '/songs/1';
+describe('/admin/songs/{songId} PATCH - update song endpoint', () => {
+	const testPath = '/admin/songs';
 
 	it('Successful request - returns 200 status and song object', async () => {
 		const token = await loginUser(adminUser);
 
 		const response = await request(app)
-			.patch(testPath)
+			.patch(testPath + '/1')
 			.set('Authorization', `Bearer ${token}`)
 			.send(patchSong);
 
@@ -136,7 +136,7 @@ describe('/songs/{songId} PATCH - update song endpoint', () => {
 		const token = await loginUser(adminUser);
 
 		const response = await request(app)
-			.patch('/songs/100')
+			.patch(testPath + '/100')
 			.set('Authorization', `Bearer ${token}`)
 			.send(patchSong);
 
@@ -148,7 +148,9 @@ describe('/songs/{songId} PATCH - update song endpoint', () => {
 	});
 
 	it('Missing or invalid token - returns 401 status and error message', async () => {
-		const response = await request(app).patch(testPath).send(patchSong);
+		const response = await request(app)
+			.patch(testPath + '/1')
+			.send(patchSong);
 
 		expect(response.statusCode).toBe(401);
 		expect(response.body).toHaveProperty(
@@ -161,7 +163,7 @@ describe('/songs/{songId} PATCH - update song endpoint', () => {
 		const token = await loginUser(validUser1);
 
 		const response = await request(app)
-			.patch(testPath)
+			.patch(testPath + '/1')
 			.set('Authorization', `Bearer ${token}`)
 			.send(patchSong);
 
@@ -173,14 +175,14 @@ describe('/songs/{songId} PATCH - update song endpoint', () => {
 	});
 });
 
-describe('/songs/{songId} DELETE - delete song endpoint', () => {
-	const testPath = '/songs/1';
+describe('/admin/songs/{songId} DELETE - delete song endpoint', () => {
+	const testPath = '/admin/songs';
 
 	it('Successful request - returns 204 status and success message', async () => {
 		const token = await loginUser(adminUser);
 
 		const response = await request(app)
-			.delete(testPath)
+			.delete(testPath + '/1')
 			.set('Authorization', `Bearer ${token}`);
 
 		expect(response.statusCode).toBe(204);
@@ -190,7 +192,7 @@ describe('/songs/{songId} DELETE - delete song endpoint', () => {
 		const token = await loginUser(adminUser);
 
 		const response = await request(app)
-			.delete('/songs/100')
+			.delete(testPath + '/100')
 			.set('Authorization', `Bearer ${token}`);
 
 		expect(response.statusCode).toBe(404);
@@ -201,7 +203,7 @@ describe('/songs/{songId} DELETE - delete song endpoint', () => {
 	});
 
 	it('Missing or invalid token - returns 401 status and error message', async () => {
-		const response = await request(app).delete(testPath);
+		const response = await request(app).delete(testPath + '/1');
 
 		expect(response.statusCode).toBe(401);
 		expect(response.body).toHaveProperty(
@@ -214,7 +216,7 @@ describe('/songs/{songId} DELETE - delete song endpoint', () => {
 		const token = await loginUser(validUser1);
 
 		const response = await request(app)
-			.delete(testPath)
+			.delete(testPath + '/1')
 			.set('Authorization', `Bearer ${token}`);
 
 		expect(response.statusCode).toBe(403);

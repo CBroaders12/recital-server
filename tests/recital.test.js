@@ -27,18 +27,18 @@ afterAll(async () => {
 	await closeTestDB();
 });
 
-describe('/recitals/ping GET - check recital endpoint', () => {
+describe('/auth/recitals/ping GET - check recital endpoint', () => {
 	it('returns 200 status', async () => {
 		const token = await loginUser(validUser1);
 		const response = await request(app)
-			.get('/recitals/ping')
+			.get('/auth/recitals/ping')
 			.set('Authorization', `Bearer ${token}`);
 
 		expect(response.statusCode).toBe(200);
 	});
 
 	it('Missing or invalid token - returns 401 status and error message', async () => {
-		const response = await request(app).get('/recitals/ping');
+		const response = await request(app).get('/auth/recitals/ping');
 
 		expect(response.statusCode).toBe(401);
 		expect(response.body).toHaveProperty(
@@ -48,12 +48,12 @@ describe('/recitals/ping GET - check recital endpoint', () => {
 	});
 });
 
-describe('/recitals POST - create a new recital for user', () => {
+describe('/auth/recitals POST - create a new recital for user', () => {
 	it('Successful request - returns 201 and the recital object', async () => {
 		const token = await loginUser(validUser1);
 
 		const response = await request(app)
-			.post('/recitals')
+			.post('/auth/recitals')
 			.set('Authorization', `Bearer ${token}`)
 			.send(validRecital);
 
@@ -63,7 +63,7 @@ describe('/recitals POST - create a new recital for user', () => {
 
 	it('Missing or invalid token - returns 401 status and error message', async () => {
 		const response = await request(app)
-			.post('/recitals')
+			.post('/auth/recitals')
 			.send(validRecital);
 
 		expect(response.statusCode).toBe(401);
@@ -77,7 +77,7 @@ describe('/recitals POST - create a new recital for user', () => {
 		const token = await loginUser(validUser1);
 
 		const response = await request(app)
-			.post('/recitals')
+			.post('/auth/recitals')
 			.set('Authorization', `Bearer ${token}`)
 			.send(missingRecitalName);
 
@@ -89,12 +89,12 @@ describe('/recitals POST - create a new recital for user', () => {
 	});
 });
 
-describe("/recitals GET - return all of a user's recitals", () => {
+describe("/auth/recitals GET - return all of a user's recitals", () => {
 	it("Successful request - returns 200 status and array of user's recitals", async () => {
 		const token = await loginUser(validUser1);
 
 		const response = await request(app)
-			.get('/recitals')
+			.get('/auth/recitals')
 			.set('Authorization', token);
 
 		expect(response.statusCode).toBe(200);
@@ -103,7 +103,7 @@ describe("/recitals GET - return all of a user's recitals", () => {
 	});
 
 	it('Missing or invalid token - returns 401 status and error message', async () => {
-		const response = await request(app).get('/recitals');
+		const response = await request(app).get('/auth/recitals');
 
 		expect(response.statusCode).toBe(401);
 		expect(response.body).toHaveProperty(
@@ -113,12 +113,12 @@ describe("/recitals GET - return all of a user's recitals", () => {
 	});
 });
 
-describe('/recitals/{recitalId} PUT - replace recital with given recitalId', () => {
+describe('/auth/recitals/{recitalId} PUT - replace recital with given recitalId', () => {
 	it('Successful request - returns 200 status and recital object', async () => {
 		const token = await loginUser(validUser1);
 
 		const response = await request(app)
-			.put('/recitals/1')
+			.put('/auth/recitals/1')
 			.set('Authorization', token)
 			.send(replacementRecital);
 
@@ -130,7 +130,7 @@ describe('/recitals/{recitalId} PUT - replace recital with given recitalId', () 
 		const token = await loginUser(validUser1);
 
 		const response = await request(app)
-			.put('/recitals/1')
+			.put('/auth/recitals/1')
 			.set('Authorization', token)
 			.send(missingRecitalName);
 
@@ -145,7 +145,7 @@ describe('/recitals/{recitalId} PUT - replace recital with given recitalId', () 
 		const token = await loginUser(validUser1);
 
 		const response = await request(app)
-			.put('/recitals/2')
+			.put('/auth/recitals/2')
 			.set('Authorization', token)
 			.send(replacementRecital);
 
@@ -158,7 +158,7 @@ describe('/recitals/{recitalId} PUT - replace recital with given recitalId', () 
 
 	it('Missing or invalid token - returns 401 status and error message', async () => {
 		const response = await request(app)
-			.put('/recitals/1')
+			.put('/auth/recitals/1')
 			.send(missingRecitalName);
 
 		expect(response.statusCode).toBe(401);
@@ -169,12 +169,12 @@ describe('/recitals/{recitalId} PUT - replace recital with given recitalId', () 
 	});
 });
 
-describe('/recitals/{recitalId} PATCH - update recital with given recitalId', () => {
+describe('/auth/recitals/{recitalId} PATCH - update recital with given recitalId', () => {
 	it('Successful request - returns 200 status and recital object', async () => {
 		const token = await loginUser(validUser1);
 
 		const response = await request(app)
-			.patch('/recitals/1')
+			.patch('/auth/recitals/1')
 			.set('Authorization', token)
 			.send(patchRecital);
 
@@ -187,7 +187,7 @@ describe('/recitals/{recitalId} PATCH - update recital with given recitalId', ()
 		const token = await loginUser(validUser1);
 
 		const response = await request(app)
-			.patch('/recitals/1')
+			.patch('/auth/recitals/1')
 			.set('Authorization', token)
 			.send(emptyRecital);
 
@@ -202,7 +202,7 @@ describe('/recitals/{recitalId} PATCH - update recital with given recitalId', ()
 		const token = await loginUser(validUser1);
 
 		const response = await request(app)
-			.patch('/recitals/2')
+			.patch('/auth/recitals/2')
 			.set('Authorization', token)
 			.send(patchRecital);
 
@@ -215,7 +215,7 @@ describe('/recitals/{recitalId} PATCH - update recital with given recitalId', ()
 
 	it('Missing or invalid token - returns 401 status and error message', async () => {
 		const response = await request(app)
-			.patch('/recitals/1')
+			.patch('/auth/recitals/1')
 			.send(missingRecitalName);
 
 		expect(response.statusCode).toBe(401);
@@ -231,7 +231,7 @@ describe('recitals/{recitalId} GET - return recital with given recitalId', () =>
 		const token = await loginUser(validUser1);
 
 		const response = await request(app)
-			.get('/recitals/1')
+			.get('/auth/recitals/1')
 			.set('Authorization', token);
 
 		expect(response.statusCode).toBe(200);
@@ -239,7 +239,7 @@ describe('recitals/{recitalId} GET - return recital with given recitalId', () =>
 	});
 
 	it('Missing or invalid token - returns 401 status and error message', async () => {
-		const response = await request(app).get('/recitals/1');
+		const response = await request(app).get('/auth/recitals/1');
 
 		expect(response.statusCode).toBe(401);
 		expect(response.body).toHaveProperty(
@@ -252,7 +252,7 @@ describe('recitals/{recitalId} GET - return recital with given recitalId', () =>
 		const token = await loginUser(validUser1);
 
 		const response = await request(app)
-			.get('/recitals/2')
+			.get('/auth/recitals/2')
 			.set('Authorization', token);
 
 		expect(response.statusCode).toBe(404);
@@ -263,19 +263,19 @@ describe('recitals/{recitalId} GET - return recital with given recitalId', () =>
 	});
 });
 
-describe('/recitals/{recitalId} DELETE - delete recital with given recitalId', () => {
+describe('/auth/recitals/{recitalId} DELETE - delete recital with given recitalId', () => {
 	it('Successful request - returns 204 status and success message', async () => {
 		const token = await loginUser(validUser1);
 
 		const response = await request(app)
-			.delete('/recitals/1')
+			.delete('/auth/recitals/1')
 			.set('Authorization', token);
 
 		expect(response.statusCode).toBe(204);
 	});
 
 	it('Missing or invalid token - returns 401 and error message', async () => {
-		const response = await request(app).delete('/recitals/1');
+		const response = await request(app).delete('/auth/recitals/1');
 
 		expect(response.statusCode).toBe(401);
 		expect(response.body).toHaveProperty(
@@ -288,7 +288,7 @@ describe('/recitals/{recitalId} DELETE - delete recital with given recitalId', (
 		const token = await loginUser(validUser1);
 
 		const response = await request(app)
-			.delete('/recitals/2')
+			.delete('/auth/recitals/2')
 			.set('Authorization', token);
 
 		expect(response.statusCode).toBe(404);
