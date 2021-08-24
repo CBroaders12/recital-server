@@ -6,7 +6,10 @@ const { InvalidRequestError, NotFoundError } = require('../errors');
 const songController = Router();
 
 songController.get('/ping', (req, res) => {
-	res.status(200).send();
+	res.status(200).json({
+		status: 'success',
+		data: null,
+	});
 });
 
 songController.post('/', async (req, res, next) => {
@@ -28,7 +31,10 @@ songController.post('/', async (req, res, next) => {
 		const newSong = await models.song.create(song);
 
 		res.status(201).json({
-			song: newSong,
+			status: 'success',
+			data: {
+				song: newSong,
+			},
 		});
 	} catch (error) {
 		next(error);
@@ -67,7 +73,10 @@ songController
 				throw new NotFoundError('No song with given id found');
 
 			res.status(200).json({
-				song: patchedSong[0],
+				status: 'success',
+				data: {
+					song: patchedSong[0],
+				},
 			});
 		} catch (error) {
 			next(error);
@@ -88,7 +97,10 @@ songController
 
 			await toDestroy.destroy();
 
-			res.status(204).send();
+			res.status(200).json({
+				status: 'success',
+				data: null,
+			});
 		} catch (error) {
 			next(error);
 		}

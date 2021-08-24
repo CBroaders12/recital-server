@@ -34,12 +34,15 @@ describe('/admin/songs/ping GET - check song endpoint', () => {
 			.set('Authorization', `Bearer ${token}`);
 
 		expect(response.statusCode).toBe(200);
+		expect(response.body.status).toBe('success');
+		expect(response.body.data).toBeNull();
 	});
 
 	it('Missing or invalid token - returns 401 status and error message', async () => {
 		const response = await request(app).get(testPath);
 
 		expect(response.statusCode).toBe(401);
+		expect(response.body.status).toBe('fail');
 		expect(response.body.data).toHaveProperty(
 			'message',
 			'Missing or invalid token'
@@ -54,6 +57,7 @@ describe('/admin/songs/ping GET - check song endpoint', () => {
 			.set('Authorization', `Bearer ${token}`);
 
 		expect(response.statusCode).toBe(403);
+		expect(response.body.status).toBe('fail');
 		expect(response.body.data).toHaveProperty(
 			'message',
 			'Insufficient permissions'
@@ -73,7 +77,8 @@ describe('admin/songs POST - add song endpoint', () => {
 			.send({ song: validSong });
 
 		expect(response.statusCode).toBe(201);
-		expect(response.body).toHaveProperty('song');
+		expect(response.body.status).toBe('success');
+		expect(response.body.data).toHaveProperty('song');
 	});
 
 	it('Missing required information - returns 400 status and error message', async () => {
@@ -85,6 +90,7 @@ describe('admin/songs POST - add song endpoint', () => {
 			.send({ song: missingTitle });
 
 		expect(response.statusCode).toBe(400);
+		expect(response.body.status).toBe('fail');
 		expect(response.body.data).toHaveProperty(
 			'message',
 			'Song missing required information'
@@ -97,6 +103,7 @@ describe('admin/songs POST - add song endpoint', () => {
 			.send({ song: validSong });
 
 		expect(response.statusCode).toBe(401);
+		expect(response.body.status).toBe('fail');
 		expect(response.body.data).toHaveProperty(
 			'message',
 			'Missing or invalid token'
@@ -112,6 +119,7 @@ describe('admin/songs POST - add song endpoint', () => {
 			.send({ song: validSongWithSet });
 
 		expect(response.statusCode).toBe(403);
+		expect(response.body.status).toBe('fail');
 		expect(response.body.data).toHaveProperty(
 			'message',
 			'Insufficient permissions'
@@ -131,7 +139,9 @@ describe('/admin/songs/{songId} PATCH - update song endpoint', () => {
 			.send({ song: patchSong });
 
 		expect(response.statusCode).toBe(200);
-		expect(response.body).toHaveProperty('song');
+		expect(response.body.status).toBe('success');
+		expect(response.body.data).toHaveProperty('song');
+		expect(response.body.data.song.title).toBe(patchSong.title);
 	});
 
 	it('Invalid songId - returns 404 status and error message', async () => {
@@ -143,6 +153,7 @@ describe('/admin/songs/{songId} PATCH - update song endpoint', () => {
 			.send({ song: patchSong });
 
 		expect(response.statusCode).toBe(404);
+		expect(response.body.status).toBe('fail');
 		expect(response.body.data).toHaveProperty(
 			'message',
 			'No song with given id found'
@@ -155,6 +166,7 @@ describe('/admin/songs/{songId} PATCH - update song endpoint', () => {
 			.send({ song: patchSong });
 
 		expect(response.statusCode).toBe(401);
+		expect(response.body.status).toBe('fail');
 		expect(response.body.data).toHaveProperty(
 			'message',
 			'Missing or invalid token'
@@ -170,6 +182,7 @@ describe('/admin/songs/{songId} PATCH - update song endpoint', () => {
 			.send({ song: patchSong });
 
 		expect(response.statusCode).toBe(403);
+		expect(response.body.status).toBe('fail');
 		expect(response.body.data).toHaveProperty(
 			'message',
 			'Insufficient permissions'
@@ -187,7 +200,9 @@ describe('/admin/songs/{songId} DELETE - delete song endpoint', () => {
 			.delete(testPath + '/1')
 			.set('Authorization', `Bearer ${token}`);
 
-		expect(response.statusCode).toBe(204);
+		expect(response.statusCode).toBe(200);
+		expect(response.body.status).toBe('success');
+		expect(response.body.data).toBeNull();
 	});
 
 	it('Invalid songId - returns 404 status and error message', async () => {
@@ -198,6 +213,7 @@ describe('/admin/songs/{songId} DELETE - delete song endpoint', () => {
 			.set('Authorization', `Bearer ${token}`);
 
 		expect(response.statusCode).toBe(404);
+		expect(response.body.status).toBe('fail');
 		expect(response.body.data).toHaveProperty(
 			'message',
 			'No song with given id found'
@@ -208,6 +224,7 @@ describe('/admin/songs/{songId} DELETE - delete song endpoint', () => {
 		const response = await request(app).delete(testPath + '/1');
 
 		expect(response.statusCode).toBe(401);
+		expect(response.body.status).toBe('fail');
 		expect(response.body.data).toHaveProperty(
 			'message',
 			'Missing or invalid token'
@@ -222,6 +239,7 @@ describe('/admin/songs/{songId} DELETE - delete song endpoint', () => {
 			.set('Authorization', `Bearer ${token}`);
 
 		expect(response.statusCode).toBe(403);
+		expect(response.body.status).toBe('fail');
 		expect(response.body.data).toHaveProperty(
 			'message',
 			'Insufficient permissions'

@@ -25,6 +25,8 @@ describe('/users/ping GET - check users endpoint', () => {
 	it('returns 200 status', async () => {
 		const response = await request(app).get('/users/ping');
 		expect(response.statusCode).toBe(200);
+		expect(response.body.status).toBe('success');
+		expect(response.body.data).toBeNull();
 	});
 });
 
@@ -35,7 +37,9 @@ describe('/users/register POST - create new user', () => {
 			.send({ user: validUser1 });
 
 		expect(response.statusCode).toBe(201);
-		expect(response.body).toHaveProperty('token');
+		expect(response.body.status).toBe('success');
+		expect(response.body.data).toHaveProperty('token');
+		expect(response.body.data).toHaveProperty('email', validUser1.email);
 	});
 
 	it('Missing email - returns 400 status and error message', async () => {
@@ -44,6 +48,7 @@ describe('/users/register POST - create new user', () => {
 			.send({ user: missingEmail });
 
 		expect(response.statusCode).toBe(400);
+		expect(response.body.status).toBe('fail');
 		expect(response.body.data).toHaveProperty(
 			'message',
 			'Missing email or password'
@@ -56,6 +61,7 @@ describe('/users/register POST - create new user', () => {
 			.send({ user: missingPassword });
 
 		expect(response.statusCode).toBe(400);
+		expect(response.body.status).toBe('fail');
 		expect(response.body.data).toHaveProperty(
 			'message',
 			'Missing email or password'
@@ -68,6 +74,7 @@ describe('/users/register POST - create new user', () => {
 			.send({ user: validUser1 });
 
 		expect(response.statusCode).toBe(400);
+		expect(response.body.status).toBe('fail');
 		expect(response.body.data).toHaveProperty(
 			'message',
 			'Email is already registered'
@@ -87,7 +94,9 @@ describe('/users/login POST - log in user', () => {
 			.send({ user: validUser1 });
 
 		expect(response.statusCode).toBe(200);
-		expect(response.body).toHaveProperty('token');
+		expect(response.body.status).toBe('success');
+		expect(response.body.data).toHaveProperty('token');
+		expect(response.body.data).toHaveProperty('email', validUser1.email);
 	});
 
 	it('Incorrect email - returns 401 status and error message', async () => {
@@ -96,6 +105,7 @@ describe('/users/login POST - log in user', () => {
 			.send({ user: incorrectEmail });
 
 		expect(response.statusCode).toBe(401);
+		expect(response.body.status).toBe('fail');
 		expect(response.body.data).toHaveProperty(
 			'message',
 			'Incorrect email or password'
@@ -108,6 +118,7 @@ describe('/users/login POST - log in user', () => {
 			.send({ user: incorrectPassword });
 
 		expect(response.statusCode).toBe(401);
+		expect(response.body.status).toBe('fail');
 		expect(response.body.data).toHaveProperty(
 			'message',
 			'Incorrect email or password'
@@ -120,6 +131,7 @@ describe('/users/login POST - log in user', () => {
 			.send({ user: missingPassword });
 
 		expect(response.statusCode).toBe(400);
+		expect(response.body.status).toBe('fail');
 		expect(response.body.data).toHaveProperty(
 			'message',
 			'Please provide email and password'
@@ -132,6 +144,7 @@ describe('/users/login POST - log in user', () => {
 			.send({ user: missingEmail });
 
 		expect(response.statusCode).toBe(400);
+		expect(response.body.status).toBe('fail');
 		expect(response.body.data).toHaveProperty(
 			'message',
 			'Please provide email and password'

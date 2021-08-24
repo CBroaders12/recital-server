@@ -9,7 +9,10 @@ const userController = Router();
 
 // Ping user route
 userController.get('/ping', (req, res) => {
-	res.status(200).send();
+	res.status(200).json({
+		status: 'success',
+		data: null,
+	});
 });
 
 userController.post('/register', async (req, res, next) => {
@@ -29,7 +32,11 @@ userController.post('/register', async (req, res, next) => {
 		});
 
 		res.status(201).json({
-			token,
+			status: 'success',
+			data: {
+				token,
+				email,
+			},
 		});
 	} catch (error) {
 		next(error);
@@ -57,7 +64,11 @@ userController.post('/login', async (req, res, next) => {
 				expiresIn: '1d',
 			});
 			res.status(200).json({
-				token,
+				status: 'success',
+				data: {
+					token,
+					email,
+				},
 			});
 		} else {
 			throw new AuthorizationError('Incorrect email or password');
@@ -86,7 +97,11 @@ userController.post('/admin', async (req, res, next) => {
 		});
 
 		res.status(201).json({
-			token,
+			status: 'success',
+			data: {
+				token,
+				email,
+			},
 		});
 	} catch (error) {
 		next(error);

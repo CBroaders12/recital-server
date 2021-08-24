@@ -6,7 +6,10 @@ const { Router } = require('express');
 const recitalController = Router();
 
 recitalController.get('/ping', (req, res) => {
-	res.status(200).send();
+	res.status(200).json({
+		status: 'success',
+		data: null,
+	});
 });
 
 recitalController
@@ -28,7 +31,10 @@ recitalController
 			});
 
 			res.status(201).json({
-				recital: newRecital,
+				status: 'success',
+				data: {
+					recital: newRecital,
+				},
 			});
 		} catch (error) {
 			next(error);
@@ -45,8 +51,11 @@ recitalController
 			});
 
 			res.status(200).json({
-				recitals,
-				count: recitals.length,
+				status: 'success',
+				data: {
+					recitals,
+					count: recitals.length,
+				},
 			});
 		} catch (error) {
 			next(error);
@@ -64,7 +73,7 @@ recitalController
 			if (!name)
 				throw new InvalidRequestError('Recital name must be provided');
 
-			const [count, updatedRecital] = await models.recital.update(
+			const [count, updatedRecitals] = await models.recital.update(
 				{
 					name,
 					date,
@@ -86,7 +95,10 @@ recitalController
 				);
 
 			res.status(200).json({
-				recital: updatedRecital,
+				status: 'success',
+				data: {
+					recital: updatedRecitals[0],
+				},
 			});
 		} catch (error) {
 			next(error);
@@ -125,7 +137,10 @@ recitalController
 				);
 
 			res.status(200).json({
-				recital: patchedRecital[0],
+				status: 'success',
+				data: {
+					recital: patchedRecital[0],
+				},
 			});
 		} catch (error) {
 			next(error);
@@ -149,7 +164,10 @@ recitalController
 				);
 
 			res.status(200).json({
-				recital,
+				status: 'success',
+				data: {
+					recital,
+				},
 			});
 		} catch (error) {
 			next(error);
@@ -174,7 +192,10 @@ recitalController
 
 			await toDestroy.destroy();
 
-			res.status(204).send();
+			res.status(200).json({
+				status: 'success',
+				data: null,
+			});
 		} catch (error) {
 			next(error);
 		}

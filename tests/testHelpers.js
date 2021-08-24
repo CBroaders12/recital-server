@@ -17,7 +17,7 @@ helpers.registerUser = async (testUser) => {
 		.post('/users/register')
 		.send({ user: testUser });
 
-	return response.body.token;
+	return response.body.data.token;
 };
 
 helpers.loginUser = async (testUser) => {
@@ -25,7 +25,7 @@ helpers.loginUser = async (testUser) => {
 		.post('/users/login')
 		.send({ user: testUser });
 
-	return response.body.token;
+	return response.body.data.token;
 };
 
 helpers.createAdmin = async (newAdmin) => {
@@ -33,7 +33,7 @@ helpers.createAdmin = async (newAdmin) => {
 		.post('/users/admin')
 		.send({ user: newAdmin });
 
-	return response.body.token;
+	return response.body.data.token;
 };
 
 module.exports = helpers;
