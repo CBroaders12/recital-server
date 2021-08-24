@@ -13,7 +13,7 @@ recitalController
 	.route('/')
 	.post(async (req, res, next) => {
 		try {
-			const { name, date, location, description } = req.body;
+			const { name, date, location, description } = req.body.recital;
 			const { id: organizerId } = req.user;
 
 			if (!name)
@@ -57,7 +57,7 @@ recitalController
 	.route('/:recitalId')
 	.put(async (req, res, next) => {
 		try {
-			const { name, date, location, description } = req.body;
+			const { name, date, location, description } = req.body.recital;
 			const { id: organizerId } = req.user;
 			const { recitalId } = req.params;
 
@@ -96,7 +96,7 @@ recitalController
 		try {
 			const { recitalId } = req.params;
 			const { id: organizerId } = req.user;
-			const { name, location, date, description } = req.body;
+			const { name, location, date, description } = req.body.recital;
 
 			// only include info to patch without deleting other data
 			let patchRecital = {};

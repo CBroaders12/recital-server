@@ -3,7 +3,6 @@ const Express = require('express');
 
 const app = Express();
 
-const controllers = require('./controllers');
 const routes = require('./routes');
 const middlewares = require('./middleware');
 

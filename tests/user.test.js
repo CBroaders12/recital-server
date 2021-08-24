@@ -32,7 +32,7 @@ describe('/users/register POST - create new user', () => {
 	it('Successful request - creates new user, returns 201 status and token', async () => {
 		const response = await request(app)
 			.post('/users/register')
-			.send(validUser1);
+			.send({ user: validUser1 });
 
 		expect(response.statusCode).toBe(201);
 		expect(response.body).toHaveProperty('token');
@@ -41,10 +41,10 @@ describe('/users/register POST - create new user', () => {
 	it('Missing email - returns 400 status and error message', async () => {
 		const response = await request(app)
 			.post('/users/register')
-			.send(missingEmail);
+			.send({ user: missingEmail });
 
 		expect(response.statusCode).toBe(400);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'Missing email or password'
 		);
@@ -53,10 +53,10 @@ describe('/users/register POST - create new user', () => {
 	it('Missing password - returns 400 status and error message', async () => {
 		const response = await request(app)
 			.post('/users/register')
-			.send(missingPassword);
+			.send({ user: missingPassword });
 
 		expect(response.statusCode).toBe(400);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'Missing email or password'
 		);
@@ -65,10 +65,10 @@ describe('/users/register POST - create new user', () => {
 	it('Email already in use - returns 400 status and error message', async () => {
 		const response = await request(app)
 			.post('/users/register')
-			.send(validUser1);
+			.send({ user: validUser1 });
 
 		expect(response.statusCode).toBe(400);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'Email is already registered'
 		);
@@ -84,7 +84,7 @@ describe('/users/login POST - log in user', () => {
 	it('Successful request - returns 200 status and token', async () => {
 		const response = await request(app)
 			.post('/users/login')
-			.send(validUser1);
+			.send({ user: validUser1 });
 
 		expect(response.statusCode).toBe(200);
 		expect(response.body).toHaveProperty('token');
@@ -93,10 +93,10 @@ describe('/users/login POST - log in user', () => {
 	it('Incorrect email - returns 401 status and error message', async () => {
 		const response = await request(app)
 			.post('/users/login')
-			.send(incorrectEmail);
+			.send({ user: incorrectEmail });
 
 		expect(response.statusCode).toBe(401);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'Incorrect email or password'
 		);
@@ -105,10 +105,10 @@ describe('/users/login POST - log in user', () => {
 	it('Incorrect password - returns 401 status and error message', async () => {
 		const response = await request(app)
 			.post('/users/login')
-			.send(incorrectPassword);
+			.send({ user: incorrectPassword });
 
 		expect(response.statusCode).toBe(401);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'Incorrect email or password'
 		);
@@ -117,10 +117,10 @@ describe('/users/login POST - log in user', () => {
 	it('Missing password - returns 400 status and error message', async () => {
 		const response = await request(app)
 			.post('/users/login')
-			.send(missingPassword);
+			.send({ user: missingPassword });
 
 		expect(response.statusCode).toBe(400);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'Please provide email and password'
 		);
@@ -129,10 +129,10 @@ describe('/users/login POST - log in user', () => {
 	it('Missing email - returns 400 status and error message', async () => {
 		const response = await request(app)
 			.post('/users/login')
-			.send(missingEmail);
+			.send({ user: missingEmail });
 
 		expect(response.statusCode).toBe(400);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'Please provide email and password'
 		);

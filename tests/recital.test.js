@@ -41,7 +41,7 @@ describe('/auth/recitals/ping GET - check recital endpoint', () => {
 		const response = await request(app).get('/auth/recitals/ping');
 
 		expect(response.statusCode).toBe(401);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'Missing or invalid token'
 		);
@@ -55,7 +55,7 @@ describe('/auth/recitals POST - create a new recital for user', () => {
 		const response = await request(app)
 			.post('/auth/recitals')
 			.set('Authorization', `Bearer ${token}`)
-			.send(validRecital);
+			.send({ recital: validRecital });
 
 		expect(response.statusCode).toBe(201);
 		expect(response.body).toHaveProperty('recital');
@@ -64,10 +64,10 @@ describe('/auth/recitals POST - create a new recital for user', () => {
 	it('Missing or invalid token - returns 401 status and error message', async () => {
 		const response = await request(app)
 			.post('/auth/recitals')
-			.send(validRecital);
+			.send({ recital: validRecital });
 
 		expect(response.statusCode).toBe(401);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'Missing or invalid token'
 		);
@@ -79,10 +79,10 @@ describe('/auth/recitals POST - create a new recital for user', () => {
 		const response = await request(app)
 			.post('/auth/recitals')
 			.set('Authorization', `Bearer ${token}`)
-			.send(missingRecitalName);
+			.send({ recital: missingRecitalName });
 
 		expect(response.statusCode).toBe(400);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'Recital name must be provided'
 		);
@@ -106,7 +106,7 @@ describe("/auth/recitals GET - return all of a user's recitals", () => {
 		const response = await request(app).get('/auth/recitals');
 
 		expect(response.statusCode).toBe(401);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'Missing or invalid token'
 		);
@@ -120,7 +120,7 @@ describe('/auth/recitals/{recitalId} PUT - replace recital with given recitalId'
 		const response = await request(app)
 			.put('/auth/recitals/1')
 			.set('Authorization', token)
-			.send(replacementRecital);
+			.send({ recital: replacementRecital });
 
 		expect(response.statusCode).toBe(200);
 		expect(response.body).toHaveProperty('recital');
@@ -132,10 +132,10 @@ describe('/auth/recitals/{recitalId} PUT - replace recital with given recitalId'
 		const response = await request(app)
 			.put('/auth/recitals/1')
 			.set('Authorization', token)
-			.send(missingRecitalName);
+			.send({ recital: missingRecitalName });
 
 		expect(response.statusCode).toBe(400);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'Recital name must be provided'
 		);
@@ -147,10 +147,10 @@ describe('/auth/recitals/{recitalId} PUT - replace recital with given recitalId'
 		const response = await request(app)
 			.put('/auth/recitals/2')
 			.set('Authorization', token)
-			.send(replacementRecital);
+			.send({ recital: replacementRecital });
 
 		expect(response.statusCode).toBe(404);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'No recital with given id found for user'
 		);
@@ -159,10 +159,10 @@ describe('/auth/recitals/{recitalId} PUT - replace recital with given recitalId'
 	it('Missing or invalid token - returns 401 status and error message', async () => {
 		const response = await request(app)
 			.put('/auth/recitals/1')
-			.send(missingRecitalName);
+			.send({ recital: missingRecitalName });
 
 		expect(response.statusCode).toBe(401);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'Missing or invalid token'
 		);
@@ -176,7 +176,7 @@ describe('/auth/recitals/{recitalId} PATCH - update recital with given recitalId
 		const response = await request(app)
 			.patch('/auth/recitals/1')
 			.set('Authorization', token)
-			.send(patchRecital);
+			.send({ recital: patchRecital });
 
 		expect(response.statusCode).toBe(200);
 		expect(response.body).toHaveProperty('recital');
@@ -189,10 +189,10 @@ describe('/auth/recitals/{recitalId} PATCH - update recital with given recitalId
 		const response = await request(app)
 			.patch('/auth/recitals/1')
 			.set('Authorization', token)
-			.send(emptyRecital);
+			.send({ recital: emptyRecital });
 
 		expect(response.statusCode).toBe(400);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'No information provided'
 		);
@@ -204,10 +204,10 @@ describe('/auth/recitals/{recitalId} PATCH - update recital with given recitalId
 		const response = await request(app)
 			.patch('/auth/recitals/2')
 			.set('Authorization', token)
-			.send(patchRecital);
+			.send({ recital: patchRecital });
 
 		expect(response.statusCode).toBe(404);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'No recital with given id found for user'
 		);
@@ -216,10 +216,10 @@ describe('/auth/recitals/{recitalId} PATCH - update recital with given recitalId
 	it('Missing or invalid token - returns 401 status and error message', async () => {
 		const response = await request(app)
 			.patch('/auth/recitals/1')
-			.send(missingRecitalName);
+			.send({ recital: missingRecitalName });
 
 		expect(response.statusCode).toBe(401);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'Missing or invalid token'
 		);
@@ -242,7 +242,7 @@ describe('recitals/{recitalId} GET - return recital with given recitalId', () =>
 		const response = await request(app).get('/auth/recitals/1');
 
 		expect(response.statusCode).toBe(401);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'Missing or invalid token'
 		);
@@ -256,7 +256,7 @@ describe('recitals/{recitalId} GET - return recital with given recitalId', () =>
 			.set('Authorization', token);
 
 		expect(response.statusCode).toBe(404);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'No recital with given id found for user'
 		);
@@ -278,7 +278,7 @@ describe('/auth/recitals/{recitalId} DELETE - delete recital with given recitalI
 		const response = await request(app).delete('/auth/recitals/1');
 
 		expect(response.statusCode).toBe(401);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'Missing or invalid token'
 		);
@@ -292,7 +292,7 @@ describe('/auth/recitals/{recitalId} DELETE - delete recital with given recitalI
 			.set('Authorization', token);
 
 		expect(response.statusCode).toBe(404);
-		expect(response.body).toHaveProperty(
+		expect(response.body.data).toHaveProperty(
 			'message',
 			'No recital with given id found for user'
 		);

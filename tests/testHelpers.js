@@ -13,19 +13,25 @@ helpers.closeTestDB = async () => {
 };
 
 helpers.registerUser = async (testUser) => {
-	const response = await request(app).post('/users/register').send(testUser);
+	const response = await request(app)
+		.post('/users/register')
+		.send({ user: testUser });
 
 	return response.body.token;
 };
 
 helpers.loginUser = async (testUser) => {
-	const response = await request(app).post('/users/login').send(testUser);
+	const response = await request(app)
+		.post('/users/login')
+		.send({ user: testUser });
 
 	return response.body.token;
 };
 
 helpers.createAdmin = async (newAdmin) => {
-	const response = await request(app).post('/users/admin').send(newAdmin);
+	const response = await request(app)
+		.post('/users/admin')
+		.send({ user: newAdmin });
 
 	return response.body.token;
 };
