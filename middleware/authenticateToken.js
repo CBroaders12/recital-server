@@ -23,6 +23,7 @@ const validateToken = async (req, res, next) => {
 		const user = await models.user.findOne({
 			where: { id: payload.id },
 		});
+
 		req.user = user;
 		next();
 	} catch (error) {

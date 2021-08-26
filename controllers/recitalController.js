@@ -12,6 +12,11 @@ recitalController.get('/ping', (req, res) => {
 	});
 });
 
+/**
+ * CREATE a new recital
+ * GET all recitals from a user
+ */
+
 recitalController
 	.route('/')
 	.post(async (req, res, next) => {
@@ -61,6 +66,10 @@ recitalController
 			next(error);
 		}
 	});
+
+/**
+ * UPDATE, REPLACE, GET, and DELETE a recital with a given recitalId
+ */
 
 recitalController
 	.route('/:recitalId')
@@ -200,5 +209,58 @@ recitalController
 			next(error);
 		}
 	});
+
+/**
+ * ADD a song with a given songId to a recital
+ */
+
+recitalController.post('/:recitalId/songs/:songId', async (req, res, next) => {
+	try {
+		const { recitalId, songId } = req.params;
+		const { id: organizerId } = req.user;
+
+		const targetRecital = await models.recital.findOne({
+			where: {
+				id: recitalId,
+				organizerId,
+			},
+			include: models.song,
+		});
+
+		if (!targetRecital)
+			throw new NotFoundError('No recital with given id found for user');
+
+		let existingSongs = targetRecital.songs.map((song) => song.id);
+		if (existingSongs.includes(parseInt(songId)))
+			throw new InvalidRequestError(
+				'Selected song is already part of recital'
+			);
+
+		const targetSong = await models.song.findOne({
+			where: {
+				id: songId,
+			},
+		});
+
+		if (!targetSong) throw new NotFoundError('No song with given id found');
+
+		await models.recital_song.create({
+			recitalId,
+			songId,
+			order: targetRecital.songs.length,
+		});
+
+		targetRecital.songs.push(targetSong);
+
+		res.status(200).json({
+			status: 'success',
+			data: {
+				recital: targetRecital,
+			},
+		});
+	} catch (error) {
+		next(error);
+	}
+});
 
 module.exports = recitalController;

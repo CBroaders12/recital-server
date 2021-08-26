@@ -5,10 +5,11 @@ const {
 	closeTestDB,
 	registerUser,
 	loginUser,
+	createAdmin,
 } = require('./testHelpers');
 
 const {
-	users: { validUser1 },
+	users: { validUser1, adminUser },
 	recitals: {
 		validRecital,
 		missingRecitalName,
@@ -16,11 +17,13 @@ const {
 		replacementRecital,
 		emptyRecital,
 	},
+	songs: { validSong },
 } = require('./testData');
 
 beforeAll(async () => {
 	await startTestDB();
 	await registerUser(validUser1);
+	await createAdmin(adminUser);
 });
 
 afterAll(async () => {
@@ -288,7 +291,7 @@ describe('recitals/{recitalId} GET - return recital with given recitalId', () =>
 });
 
 describe('/auth/recitals/{recitalId} DELETE - delete recital with given recitalId', () => {
-	it('Successful request - returns 204 status and success message', async () => {
+	it('Successful request - returns 200 status and success message', async () => {
 		const token = await loginUser(validUser1);
 
 		const response = await request(app)
@@ -300,7 +303,7 @@ describe('/auth/recitals/{recitalId} DELETE - delete recital with given recitalI
 		expect(response.body.data).toBeNull();
 	});
 
-	it('Missing or invalid token - returns 401 and error message', async () => {
+	it('Missing or invalid token - returns 401 status and error message', async () => {
 		const response = await request(app).delete('/auth/recitals/1');
 
 		expect(response.statusCode).toBe(401);
@@ -325,4 +328,48 @@ describe('/auth/recitals/{recitalId} DELETE - delete recital with given recitalI
 			'No recital with given id found for user'
 		);
 	});
+});
+
+describe('/auth/recitals/{recitalId}/songs/{songId} POST - Add song of songId to recital of recitalId', () => {
+	const testPath = (recitalId, songId) =>
+		`/auth/recitals/${recitalId}/songs/${songId}`;
+
+	it('Successful request - returns 200 status and recital object with songs', async () => {
+		const token = await loginUser(validUser1);
+		const adminToken = await loginUser(adminUser);
+
+		await request(app)
+			.post('/admin/songs')
+			.set('Authorization', `Bearer ${adminToken}`)
+			.send({ song: validSong });
+
+		await request(app)
+			.post('/auth/recitals')
+			.set('Authorization', `Bearer ${token}`)
+			.send({ recital: validRecital });
+
+		const response = await request(app)
+			.post(testPath(2, 1))
+			.set('Authorization', `Bearer ${token}`);
+
+		expect(response.statusCode).toBe(200);
+		expect(response.body.status).toBe('success');
+		expect(response.body.data).toHaveProperty('recital');
+		expect(response.body.data.recital.songs[0]).toMatchObject(validSong);
+	});
+	it.todo('Missing or invalid token - returns 401 status and error message');
+	it.todo('Invalid recitalId - returns 404 status and error message');
+	it.todo('Invalid songId - returns 404 status and error message');
+});
+
+describe('/auth/recitals/{recitalId}/songs/{songId} DELETE - Delete song of songId from recital of recitalId', () => {
+	const testPath = (recitalId, songId) =>
+		`/recitals/${recitalId}/songs/${songId}`;
+
+	it.todo(
+		'Successful request - returns 200 status and recital object with songs'
+	);
+	it.todo('Missing or invalid token - returns 401 status and error message');
+	it.todo('Invalid recitalId - returns 404 status and error message');
+	it.todo('Invalid songId - returns 404 status and error message');
 });
