@@ -357,9 +357,47 @@ describe('/auth/recitals/{recitalId}/songs/{songId} POST - Add song of songId to
 		expect(response.body.data).toHaveProperty('recital');
 		expect(response.body.data.recital.songs[0]).toMatchObject(validSong);
 	});
-	it.todo('Missing or invalid token - returns 401 status and error message');
-	it.todo('Invalid recitalId - returns 404 status and error message');
-	it.todo('Invalid songId - returns 404 status and error message');
+
+	it('Missing or invalid token - returns 401 status and error message', async () => {
+		const response = await request(app).post(testPath(2, 1));
+
+		expect(response.statusCode).toBe(401);
+		expect(response.body.status).toBe('fail');
+		expect(response.body.data).toHaveProperty(
+			'message',
+			'Missing or invalid token'
+		);
+	});
+
+	it('Invalid recitalId - returns 404 status and error message', async () => {
+		const token = await loginUser(validUser1);
+
+		const response = await request(app)
+			.post(testPath(10, 1))
+			.set('Authorization', `Bearer ${token}`);
+
+		expect(response.statusCode).toBe(404);
+		expect(response.body.status).toBe('fail');
+		expect(response.body.data).toHaveProperty(
+			'message',
+			'No recital with given id found for user'
+		);
+	});
+
+	it('Invalid songId - returns 404 status and error message', async () => {
+		const token = await loginUser(validUser1);
+
+		const response = await request(app)
+			.post(testPath(2, 10))
+			.set('Authorization', `Bearer ${token}`);
+
+		expect(response.statusCode).toBe(404);
+		expect(response.body.status).toBe('fail');
+		expect(response.body.data).toHaveProperty(
+			'message',
+			'No song with given id found'
+		);
+	});
 });
 
 describe('/auth/recitals/{recitalId}/songs/{songId} DELETE - Delete song of songId from recital of recitalId', () => {

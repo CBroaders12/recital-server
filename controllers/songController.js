@@ -21,9 +21,9 @@ songController.post('/', async (req, res, next) => {
 			!song.composer ||
 			!song.author ||
 			!song.language ||
-			!song.compositionYear ||
-			!song.originalKey ||
-			!song.catalogueNumber ||
+			!song.composition_year ||
+			!song.original_key ||
+			!song.catalogue_number ||
 			!song.period
 		)
 			throw new InvalidRequestError('Song missing required information');
@@ -53,9 +53,9 @@ songController
 				!song.composer &&
 				!song.author &&
 				!song.language &&
-				!song.compositionYear &&
-				!song.originalKey &&
-				!song.catalogueNumber &&
+				!song.composition_year &&
+				!song.original_key &&
+				!song.catalogue_number &&
 				!song.period
 			)
 				throw new InvalidRequestError(
