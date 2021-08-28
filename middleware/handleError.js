@@ -1,5 +1,6 @@
 const { GeneralError } = require('../errors');
 const { UniqueConstraintError } = require('sequelize/lib/errors');
+const JsonWebTokenError = require('jsonwebtoken/lib/JsonWebTokenError');
 
 const handleError = (err, req, res, next) => {
 	if (err instanceof GeneralError) {
@@ -18,10 +19,16 @@ const handleError = (err, req, res, next) => {
 			},
 		});
 	}
-
+	if (err instanceof JsonWebTokenError) {
+		return res.status(401).json({
+			status: 'error',
+			message: err.message,
+		});
+	}
 	return res.status(500).json({
 		status: 'error',
 		message: err.message,
+		error: err,
 	});
 };
 

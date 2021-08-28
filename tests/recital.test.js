@@ -7,6 +7,7 @@ const {
 	loginUser,
 	createAdmin,
 	sendInvalidTokenRequest,
+	testGetEndpoint,
 } = require('./testHelpers');
 
 const {
@@ -34,13 +35,17 @@ afterAll(async () => {
 describe('/auth/recitals/ping GET - check recital endpoint', () => {
 	it('returns 200 status', async () => {
 		const token = await loginUser(validUser1);
-		const response = await request(app)
-			.get('/auth/recitals/ping')
-			.set('Authorization', `Bearer ${token}`);
+		await testGetEndpoint(
+			'/auth/recitals/ping',
+			200,
+			'success',
+			null,
+			token
+		);
 
-		expect(response.statusCode).toBe(200);
-		expect(response.body.status).toBe('success');
-		expect(response.body.data).toBeNull();
+		// expect(response.statusCode).toBe(200);
+		// expect(response.body.status).toBe('success');
+		// expect(response.body.data).toBeNull();
 	});
 
 	it('Missing or invalid token - returns 401 status and error message', async () => {
