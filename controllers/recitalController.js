@@ -214,53 +214,108 @@ recitalController
  * ADD a song with a given songId to a recital
  */
 
-recitalController.post('/:recitalId/songs/:songId', async (req, res, next) => {
-	try {
-		const { recitalId, songId } = req.params;
-		const { id: organizerId } = req.user;
+recitalController
+	.route('/:recitalId/songs/:songId')
+	.post(async (req, res, next) => {
+		try {
+			const { recitalId, songId } = req.params;
+			const { id: organizerId } = req.user;
 
-		const targetRecital = await models.recital.findOne({
-			where: {
-				id: recitalId,
-				organizerId,
-			},
-			include: models.song,
-		});
+			const targetRecital = await models.recital.findOne({
+				where: {
+					id: recitalId,
+					organizerId,
+				},
+				include: models.song,
+			});
 
-		if (!targetRecital)
-			throw new NotFoundError('No recital with given id found for user');
+			if (!targetRecital)
+				throw new NotFoundError(
+					'No recital with given id found for user'
+				);
 
-		let existingSongs = targetRecital.songs.map((song) => song.id);
-		if (existingSongs.includes(parseInt(songId)))
-			throw new InvalidRequestError(
-				'Selected song is already part of recital'
-			);
+			let existingSongs = targetRecital.songs.map((song) => song.id);
+			if (existingSongs.includes(parseInt(songId)))
+				throw new InvalidRequestError(
+					'Selected song is already part of recital'
+				);
 
-		const targetSong = await models.song.findOne({
-			where: {
-				id: songId,
-			},
-		});
+			const targetSong = await models.song.findOne({
+				where: {
+					id: songId,
+				},
+			});
 
-		if (!targetSong) throw new NotFoundError('No song with given id found');
+			if (!targetSong)
+				throw new NotFoundError('No song with given id found');
 
-		await models.recital_song.create({
-			recitalId,
-			songId,
-			order: targetRecital.songs.length,
-		});
+			await models.recital_song.create({
+				recitalId,
+				songId,
+				order: targetRecital.songs.length,
+			});
 
-		targetRecital.songs.push(targetSong);
+			targetRecital.songs.push(targetSong);
 
-		res.status(200).json({
-			status: 'success',
-			data: {
-				recital: targetRecital,
-			},
-		});
-	} catch (error) {
-		next(error);
-	}
-});
+			res.status(200).json({
+				status: 'success',
+				data: {
+					recital: targetRecital,
+				},
+			});
+		} catch (error) {
+			next(error);
+		}
+	})
+	.delete(async (req, res, next) => {
+		try {
+			const { songId, recitalId } = req.params;
+			const { id: organizerId } = req.user;
+
+			const targetRecital = await models.recital.findOne({
+				where: {
+					id: recitalId,
+					organizerId,
+				},
+				include: models.song,
+			});
+
+			if (!targetRecital)
+				throw new NotFoundError(
+					'No recital with given id found for user'
+				);
+
+			const toDestroy = await models.recital_song.findOne({
+				where: {
+					songId,
+					recitalId,
+				},
+			});
+
+			if (!toDestroy)
+				throw new NotFoundError(
+					'No song with given id found on given recital'
+				);
+
+			await toDestroy.destroy();
+
+			let responseRecital = await models.recital.findOne({
+				where: {
+					id: recitalId,
+					organizerId,
+				},
+				include: models.song,
+			});
+
+			res.status(200).json({
+				status: 'success',
+				data: {
+					recital: responseRecital,
+				},
+			});
+		} catch (error) {
+			next(error);
+		}
+	});
 
 module.exports = recitalController;

@@ -36,4 +36,15 @@ helpers.createAdmin = async (newAdmin) => {
 	return response.body.data.token;
 };
 
+helpers.sendInvalidTokenRequest = async (reqPath, reqBody = null) => {
+	const response = await request(app).post(reqPath).send(reqBody);
+
+	expect(response.statusCode).toBe(401);
+	expect(response.body.status).toBe('fail');
+	expect(response.body.data).toHaveProperty(
+		'message',
+		'Missing or invalid token'
+	);
+};
+
 module.exports = helpers;
