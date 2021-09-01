@@ -2,6 +2,7 @@ const models = require('../models');
 const { InvalidRequestError, NotFoundError } = require('../errors');
 
 const { Router } = require('express');
+const { sequelize } = require('../models');
 
 const recitalController = Router();
 
@@ -400,11 +401,26 @@ recitalController
 					'Number of songs sent does not match number in recital'
 				);
 
-			targetRecital.setSongs(songs);
+			for (const song of songs) {
+				const existingSong = await targetRecital.getSongs({
+					where: { id: song.id },
+				});
+				await targetRecital.addSong(existingSong, {
+					through: {
+						order: song.recital_song.order,
+					},
+				});
+			}
+
+			const recitalSongs = await targetRecital.getSongs({
+				order: [[sequelize.col('recital_song.order'), 'asc']],
+			});
 
 			res.status(200).json({
 				status: 'success',
-				data: null,
+				data: {
+					songs: recitalSongs,
+				},
 			});
 		} catch (error) {
 			next(error);
