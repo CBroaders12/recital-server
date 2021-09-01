@@ -212,6 +212,7 @@ recitalController
 
 /**
  * ADD a song with a given songId to a recital
+ * DELETE a song with a given songId from a recital
  */
 
 recitalController
@@ -226,7 +227,13 @@ recitalController
 					id: recitalId,
 					organizerId,
 				},
-				include: models.song,
+				include: {
+					model: models.song,
+					as: 'songs',
+					through: {
+						attributes: [],
+					},
+				},
 			});
 
 			if (!targetRecital)
@@ -304,7 +311,13 @@ recitalController
 					id: recitalId,
 					organizerId,
 				},
-				include: models.song,
+				include: {
+					model: models.song,
+					as: 'songs',
+					through: {
+						attributes: [],
+					},
+				},
 			});
 
 			res.status(200).json({
@@ -312,6 +325,86 @@ recitalController
 				data: {
 					recital: responseRecital,
 				},
+			});
+		} catch (error) {
+			next(error);
+		}
+	});
+
+recitalController
+	.route('/:recitalId/songs')
+	.get(async (req, res, next) => {
+		try {
+			const { recitalId } = req.params;
+			const { id: organizerId } = req.user;
+
+			const targetRecital = await models.recital.findOne({
+				where: {
+					organizerId,
+					id: recitalId,
+				},
+				include: {
+					model: models.song,
+					as: 'songs',
+					through: {
+						attributes: ['order'],
+					},
+				},
+				order: [[models.song, models.recital_song, 'order', 'asc']],
+			});
+
+			if (!targetRecital)
+				throw new NotFoundError(
+					'No recital with given id found for user'
+				);
+
+			const recitalSongs = targetRecital.songs;
+
+			res.status(200).json({
+				status: 'success',
+				data: {
+					count: recitalSongs.length,
+					songs: recitalSongs,
+				},
+			});
+		} catch (error) {
+			next(error);
+		}
+	})
+	.put(async (req, res, next) => {
+		try {
+			const { recitalId } = req.params;
+			const { id: organizerId } = req.user;
+			const { songs } = req.body;
+
+			const targetRecital = await models.recital.findOne({
+				where: {
+					organizerId,
+					id: recitalId,
+				},
+				include: {
+					model: models.song,
+					as: 'songs',
+					through: {
+						attributes: ['order'],
+					},
+				},
+			});
+
+			if (!targetRecital)
+				throw new NotFoundError(
+					'No recital with given id found for user'
+				);
+			if (targetRecital.songs.length !== songs.length)
+				throw new InvalidRequestError(
+					'Number of songs sent does not match number in recital'
+				);
+
+			targetRecital.setSongs(songs);
+
+			res.status(200).json({
+				status: 'success',
+				data: null,
 			});
 		} catch (error) {
 			next(error);
