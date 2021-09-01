@@ -8,6 +8,7 @@ const {
 	createAdmin,
 	sendInvalidTokenRequest,
 	testGetEndpoint,
+	testPostEndpoint,
 } = require('./testHelpers');
 
 const {
@@ -42,10 +43,6 @@ describe('/auth/recitals/ping GET - check recital endpoint', () => {
 			null,
 			token
 		);
-
-		// expect(response.statusCode).toBe(200);
-		// expect(response.body.status).toBe('success');
-		// expect(response.body.data).toBeNull();
 	});
 
 	it('Missing or invalid token - returns 401 status and error message', async () => {
@@ -57,14 +54,14 @@ describe('/auth/recitals POST - create a new recital for user', () => {
 	it('Successful request - returns 201 and the recital object', async () => {
 		const token = await loginUser(validUser1);
 
-		const response = await request(app)
-			.post('/auth/recitals')
-			.set('Authorization', `Bearer ${token}`)
-			.send({ recital: validRecital });
-
-		expect(response.statusCode).toBe(201);
-		expect(response.body.status).toBe('success');
-		expect(response.body.data).toHaveProperty('recital');
+		await testPostEndpoint(
+			'/auth/recitals',
+			201,
+			'success',
+			['recital'],
+			token,
+			{ recital: validRecital }
+		);
 	});
 
 	it('Missing or invalid token - returns 401 status and error message', async () => {
@@ -76,17 +73,26 @@ describe('/auth/recitals POST - create a new recital for user', () => {
 	it('Missing recital name - returns 400 status and error message', async () => {
 		const token = await loginUser(validUser1);
 
-		const response = await request(app)
-			.post('/auth/recitals')
-			.set('Authorization', `Bearer ${token}`)
-			.send({ recital: missingRecitalName });
-
-		expect(response.statusCode).toBe(400);
-		expect(response.body.status).toBe('fail');
-		expect(response.body.data).toHaveProperty(
-			'message',
-			'Recital name must be provided'
+		await testPostEndpoint(
+			'/auth/recitals',
+			400,
+			'fail',
+			['message'],
+			token,
+			{ recital: missingRecitalName }
 		);
+
+		// const response = await request(app)
+		// 	.post('/auth/recitals')
+		// 	.set('Authorization', `Bearer ${token}`)
+		// 	.send({ recital: missingRecitalName });
+
+		// expect(response.statusCode).toBe(400);
+		// expect(response.body.status).toBe('fail');
+		// expect(response.body.data).toHaveProperty(
+		// 	'message',
+		// 	'Recital name must be provided'
+		// );
 	});
 });
 

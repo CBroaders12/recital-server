@@ -72,7 +72,10 @@ helpers.testPostEndpoint = async (
 	expect(response.statusCode).toBe(expectedStatusCode);
 	expect(response.body.status).toBe(expectedStatus);
 	if (expectedData === null) expect(response.body.data).toBeNull();
-	else expect(response.body.data).toHaveProperty(expectedData);
+	else
+		expectedData.forEach((key) =>
+			expect(response.body.data).toHaveProperty(key)
+		);
 };
 
 /**
