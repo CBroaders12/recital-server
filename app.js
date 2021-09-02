@@ -1,7 +1,22 @@
 // Package Imports
 const Express = require('express');
+const ExpressJSDocSwagger = require('express-jsdoc-swagger');
+
+const swaggerOptions = {
+	info: {
+		version: '1.0.0',
+		title: 'RecitaList',
+		description: 'An API for singers to create recitals and find music',
+	},
+	baseDir: __dirname,
+	filesPattern: './controllers/**/*.js',
+	swaggerUIPath: '/api-docs',
+	exposeSwaggerUI: true,
+};
 
 const app = Express();
+
+ExpressJSDocSwagger(app)(swaggerOptions);
 
 const routes = require('./routes');
 const middlewares = require('./middleware');
