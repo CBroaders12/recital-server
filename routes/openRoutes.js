@@ -1,9 +1,9 @@
 const { Router } = require('express');
-const controllers = require('../controllers');
+const { open } = require('../controllers');
 
 const openRouter = Router();
 
-openRouter.use('/ping', controllers.ping);
-openRouter.use('/users', controllers.user);
+openRouter.use('/ping', open.ping);
+openRouter.use('/users', open.user);
 
 module.exports = openRouter;

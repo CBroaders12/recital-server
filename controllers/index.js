@@ -1,6 +1,5 @@
 module.exports = {
-	user: require('./userController'),
-	recital: require('./recitalController'),
-	song: require('./songController'),
-	ping: require('./pingController'),
+	open: require('./open'),
+	auth: require('./auth'),
+	admin: require('./admin'),
 };

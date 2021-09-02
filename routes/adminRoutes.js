@@ -1,8 +1,9 @@
 const { Router } = require('express');
-const controllers = require('../controllers');
+const { admin } = require('../controllers');
 
 const adminRouter = Router();
 
-adminRouter.use('/songs', controllers.song);
+adminRouter.use('/songs', admin.song);
+adminRouter.use('/users', admin.user);
 
 module.exports = adminRouter;

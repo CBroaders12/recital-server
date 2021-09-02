@@ -1,7 +1,7 @@
-const models = require('../models');
+const models = require('../../models');
 
 const { Router } = require('express');
-const { InvalidRequestError, NotFoundError } = require('../errors');
+const { InvalidRequestError, NotFoundError } = require('../../errors');
 
 const songController = Router();
 

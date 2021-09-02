@@ -1,8 +1,8 @@
 const { Router } = require('express');
-const controllers = require('../controllers');
+const { auth } = require('../controllers');
 
 const authRouter = Router();
 
-authRouter.use('/recitals', controllers.recital);
+authRouter.use('/recitals', auth.recital);
 
 module.exports = authRouter;
