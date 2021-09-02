@@ -105,18 +105,6 @@ recitalController
 	});
 
 /**
- * PUT /auth/recitals/{recitalId}
- * @summary Replace information of a selected recital
- * @tags recitals
- * @param {Recital} request.body.required - Updated recital info
- * @param {number} recitalId.path.required - Recital id
- * @return {object} 200 - Recital updated
- * @return {object} 400 - Invalid request response
- * @return {object} 401 - Authorization error response
- * @return {object} 404 - Not found error response
- */
-
-/**
  * PATCH /auth/recitals/{recitalId}
  * @summary Update information of a selected recital
  * @tags recitals
@@ -150,46 +138,6 @@ recitalController
 
 recitalController
 	.route('/:recitalId')
-	.put(async (req, res, next) => {
-		try {
-			const { name, date, location, description } = req.body.recital;
-			const { id: organizerId } = req.user;
-			const { recitalId } = req.params;
-
-			if (!name)
-				throw new InvalidRequestError('Recital name must be provided');
-
-			const [count, updatedRecitals] = await models.recital.update(
-				{
-					name,
-					date,
-					location,
-					description,
-				},
-				{
-					returning: true,
-					where: {
-						id: recitalId,
-						organizerId,
-					},
-				}
-			);
-
-			if (count === 0)
-				throw new NotFoundError(
-					'No recital with given id found for user'
-				);
-
-			res.status(200).json({
-				status: 'success',
-				data: {
-					recital: updatedRecitals[0],
-				},
-			});
-		} catch (error) {
-			next(error);
-		}
-	})
 	.patch(async (req, res, next) => {
 		try {
 			const { recitalId } = req.params;
