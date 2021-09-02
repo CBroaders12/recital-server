@@ -14,10 +14,31 @@ recitalController.get('/ping', (req, res) => {
 });
 
 /**
- * CREATE a new recital
- * GET all recitals from a user
+ * A recital
+ * @typedef Recital
+ * @property {string} name.required - Name of the recital
+ * @property {Date} date - Date of the recital
+ * @property {string} location - Location of recital
+ * @property {string} description - Additional info
  */
 
+/**
+ * POST /auth/recitals
+ * @summary Create a new recital
+ * @tags recitals
+ * @param {Recital} request.body.required - Recital details
+ * @return {object} 200 - Recital created
+ * @return {object} 400 - Invalid request response
+ * @return {object} 401 - Authorization error response
+ */
+
+/**
+ * GET /auth/recitals
+ * @summary Get all user's recitals
+ * @tags recitals
+ * @return {object} 200 - Success response
+ * @return {object} 401 - Authorization error response
+ */
 recitalController
 	.route('/')
 	.post(async (req, res, next) => {
@@ -69,7 +90,14 @@ recitalController
 	});
 
 /**
- * UPDATE, REPLACE, GET, and DELETE a recital with a given recitalId
+ * PATCH /auth/recitals/{recitalId}
+ * @summary Update information of a selected recital
+ * @param {Recital} request.body.required - Updated recital info
+ * @param {number} recitalId.path - Recital id
+ * @return {object} 200 - Recital updated
+ * @return {object} 400 - Invalid request response
+ * @return {object} 401 - Authorization error response
+ * @return {object} 404 - Not found error response
  */
 
 recitalController

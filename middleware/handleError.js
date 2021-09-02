@@ -25,10 +25,10 @@ const handleError = (err, req, res, next) => {
 			message: err.message,
 		});
 	}
+	console.error(err);
 	return res.status(500).json({
 		status: 'error',
-		message: err.message,
-		error: err,
+		message: 'Server Error',
 	});
 };
 

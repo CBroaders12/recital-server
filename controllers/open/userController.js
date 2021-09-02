@@ -7,7 +7,20 @@ const jwt = require('jsonwebtoken');
 
 const userController = Router();
 
-// Ping user route
+/**
+ * A user
+ * @typedef User
+ * @property email.required - User email
+ * @property password.required - User password
+ */
+
+/**
+ * GET /users/ping
+ * @summary Check user route is up
+ * @tags ping
+ * @tags users
+ * @return {object} 200 - Success response
+ */
 userController.get('/ping', (req, res) => {
 	res.status(200).json({
 		status: 'success',
@@ -15,6 +28,14 @@ userController.get('/ping', (req, res) => {
 	});
 });
 
+/**
+ * POST /users/register
+ * @summary Register a new user
+ * @tags users
+ * @param {User} request.body.required - user info
+ * @return {object} 200 - User registered with token
+ * @return {object} 400 - Invalid request response
+ */
 userController.post('/register', async (req, res, next) => {
 	try {
 		const { email, password } = req.body.user;
@@ -43,6 +64,14 @@ userController.post('/register', async (req, res, next) => {
 	}
 });
 
+/**
+ * POST /users/login
+ * @summary Login an existing user
+ * @tags users
+ * @param {User} request.body.required - User info
+ * @return {object} 200 - User logged in with token
+ * @return {object} 400 - Invalid request response
+ */
 userController.post('/login', async (req, res, next) => {
 	try {
 		const { email, password } = req.body.user;
