@@ -23,6 +23,21 @@ recitalController.get('/ping', (req, res) => {
  */
 
 /**
+ * A song
+ * @typedef Song
+ * @property {number} id - Song id
+ * @property {string} title.required - The title
+ * @property {string} composer.required - The composer
+ * @property {string} author.required - The author of the text
+ * @property {string} language.required - Original language
+ * @property {number} composition_year - Year composed (if known)
+ * @property {string} original_key.required - Original key of song
+ * @property {string} catalogue_number - Catalogue number of song (if applicable)
+ * @property {string} period.required - Time period the song was written (ie. Romantic, Classical, etc.)
+ * @property {string} from - Larger work the song is from
+ */
+
+/**
  * POST /auth/recitals
  * @summary Create a new recital
  * @tags recitals
@@ -90,12 +105,45 @@ recitalController
 	});
 
 /**
- * PATCH /auth/recitals/{recitalId}
- * @summary Update information of a selected recital
+ * PUT /auth/recitals/{recitalId}
+ * @summary Replace information of a selected recital
+ * @tags recitals
  * @param {Recital} request.body.required - Updated recital info
- * @param {number} recitalId.path - Recital id
+ * @param {number} recitalId.path.required - Recital id
  * @return {object} 200 - Recital updated
  * @return {object} 400 - Invalid request response
+ * @return {object} 401 - Authorization error response
+ * @return {object} 404 - Not found error response
+ */
+
+/**
+ * PATCH /auth/recitals/{recitalId}
+ * @summary Update information of a selected recital
+ * @tags recitals
+ * @param {Recital} request.body.required - Updated recital info
+ * @param {number} recitalId.path.required - Recital id
+ * @return {object} 200 - Recital updated
+ * @return {object} 400 - Invalid request response
+ * @return {object} 401 - Authorization error response
+ * @return {object} 404 - Not found error response
+ */
+
+/**
+ * GET /auth/recitals/{recitalId}
+ * @summary Get info for specific recital
+ * @tags recitals
+ * @param {number} recitalId.path.required - Recital id
+ * @return {object} 200 - Recital retrieved
+ * @return {object} 401 - Authorization error response
+ * @return {object} 404 - Not found error response
+ */
+
+/**
+ * DELETE /auth/recitals/{recitalId}
+ * @summary Delete a recital
+ * @tags recitals
+ * @param {number} recitalId.path.required - Recital id
+ * @return {object} 200 - Recital deleted
  * @return {object} 401 - Authorization error response
  * @return {object} 404 - Not found error response
  */
@@ -240,8 +288,27 @@ recitalController
 	});
 
 /**
- * ADD a song with a given songId to a recital
- * DELETE a song with a given songId from a recital
+ * POST /auth/recitals/{recitalId}/songs/{songId}
+ * @summary Add a song to a recital
+ * @tags recitals
+ * @tags songs
+ * @param {number} recitalId.path.required - Recital id
+ * @param {number} songId.path.required - Song id
+ * @return {object} 200 - Song added
+ * @return {object} 401 - Authorization error response
+ * @return {object} 404 - Not found error
+ */
+
+/**
+ * DELETE /auth/recitals/{recitalId}/songs/{songId}
+ * @summary Remove a song from a recital
+ * @tags recitals
+ * @tags songs
+ * @param {number} recitalId.path.required - Recital id
+ * @param {number} songId.path.required - Song id
+ * @return {object} 200 - Song removed
+ * @return {object} 401 - Authorization error response
+ * @return {object} 404 - Not found error response
  */
 
 recitalController
@@ -360,6 +427,29 @@ recitalController
 		}
 	});
 
+/**
+ * GET /auth/recitals/{recitalId}/songs
+ * @summary Retrieve all songs on a recital
+ * @tags recitals
+ * @tags songs
+ * @param {number} recitalId.path.required - Recital id
+ * @return {object} 200 - Songs retrieved
+ * @return {object} 401 - Authorization error response
+ * @return {object} 404 - Not found error response
+ */
+
+/**
+ * PUT /auth/recitals/{recitalId}/songs
+ * @summary Reorder songs on a recital
+ * @tags recitals
+ * @tags songs
+ * @param {number} recitalId.path.required - Recital id
+ * @param {Song[]} request.body.required - List of songs with order specified
+ * @return {object} 200 - Songs reordered
+ * @return {object} 400 - Invalid request response
+ * @return {object} 401 - Authorization error response
+ * @return {object} 404 - Not found error response
+ */
 recitalController
 	.route('/:recitalId/songs')
 	.get(async (req, res, next) => {
