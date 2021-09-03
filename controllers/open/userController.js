@@ -38,7 +38,7 @@ userController.get('/ping', (req, res) => {
  */
 userController.post('/register', async (req, res, next) => {
 	try {
-		const { email, password } = req.body.user;
+		const { email, password } = req.body;
 
 		if (!password || !email)
 			throw new InvalidRequestError('Missing email or password');
@@ -74,7 +74,7 @@ userController.post('/register', async (req, res, next) => {
  */
 userController.post('/login', async (req, res, next) => {
 	try {
-		const { email, password } = req.body.user;
+		const { email, password } = req.body;
 
 		if (!email || !password)
 			throw new InvalidRequestError('Please provide email and password');

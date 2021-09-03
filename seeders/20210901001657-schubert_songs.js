@@ -1,7 +1,7 @@
 'use strict';
 const fs = require('fs');
 
-const songsFile = fs.readFileSync(`${__dirname}/../data/songs.json`);
+const songsFile = fs.readFileSync(`${__dirname}/../data/schubert_songs.json`);
 const songs = JSON.parse(songsFile, (key, value) => {
 	return value === '' ? null : value;
 });

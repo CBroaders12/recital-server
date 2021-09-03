@@ -9,7 +9,7 @@ const userController = Router();
 
 userController.post('/register', async (req, res, next) => {
 	try {
-		const { email, password } = req.body.user;
+		const { email, password } = req.body;
 
 		if (!password || !email)
 			throw new InvalidRequestError('Missing email or password');

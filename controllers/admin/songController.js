@@ -14,7 +14,7 @@ songController.get('/ping', (req, res) => {
 
 songController.post('/', async (req, res, next) => {
 	try {
-		const { song } = req.body;
+		const song = req.body;
 
 		if (
 			!song.title ||
@@ -45,7 +45,7 @@ songController
 	.route('/:songId')
 	.patch(async (req, res, next) => {
 		try {
-			const { song } = req.body;
+			const song = req.body;
 			const { songId } = req.params;
 
 			if (
