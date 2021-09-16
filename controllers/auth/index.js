@@ -1,3 +1,4 @@
 module.exports = {
-	recital: require('./recitalController'),
+  recital: require('./recitalController'),
+  song: require('./songController'),
 };
