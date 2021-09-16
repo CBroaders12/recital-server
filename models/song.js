@@ -1,50 +1,33 @@
 module.exports = (sequelize, DataTypes) => {
-	const Song = sequelize.define(
-		'song',
-		{
-			title: {
-				type: DataTypes.STRING,
-				allowNull: false,
-			},
-			composer: {
-				type: DataTypes.STRING,
-				allowNull: false,
-			},
-			author: {
-				type: DataTypes.STRING,
-				allowNull: false,
-			},
-			language: {
-				type: DataTypes.STRING,
-				allowNull: false,
-			},
-			composition_year: {
-				type: DataTypes.INTEGER,
-				allowNull: true,
-			},
-			original_key: {
-				type: DataTypes.STRING,
-				allowNull: false,
-			},
-			catalogue_number: {
-				type: DataTypes.STRING,
-				allowNull: true,
-			},
-			period: {
-				type: DataTypes.STRING,
-				allowNull: false,
-			},
-			from: {
-				type: DataTypes.STRING,
-				allowNull: true,
-			},
-		},
-		{ timestamps: false }
-	);
+  const Song = sequelize.define(
+    'song',
+    {
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      composer: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      language: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      period: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+    },
+    {
+      underscored: true,
+    }
+  );
 
-	Song.associate = (models) => {
-		Song.belongsToMany(models.recital, { through: models.recital_song });
-	};
+  Song.associate = (models) => {
+    Song.belongsToMany(models.recital, { through: models.recital_song });
+    Song.belongsTo(models.user);
+  };
 
-	return Song;
+  return Song;
 };
