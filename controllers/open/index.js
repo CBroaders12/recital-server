@@ -1,5 +1,4 @@
 module.exports = {
-	user: require('./userController'),
-	ping: require('./pingController'),
-	song: require('./songController'),
+  user: require('./userController'),
+  ping: require('./pingController'),
 };
