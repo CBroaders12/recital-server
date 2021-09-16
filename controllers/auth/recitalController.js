@@ -20,6 +20,7 @@ recitalController.get('/ping', (req, res) => {
  * @property {Date} date - Date of the recital
  * @property {string} location - Location of recital
  * @property {string} description - Additional info
+ * @property {string} programNotes - Program notes for the recital
  */
 
 /**
