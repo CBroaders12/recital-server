@@ -230,7 +230,6 @@ recitalController
  * POST /auth/recitals/{recitalId}/songs/{songId}
  * @summary Add a song to a recital
  * @tags recitals
- * @tags songs
  * @param {number} recitalId.path.required - Recital id
  * @param {number} songId.path.required - Song id
  * @return {object} 200 - Song added
@@ -242,7 +241,6 @@ recitalController
  * DELETE /auth/recitals/{recitalId}/songs/{songId}
  * @summary Remove a song from a recital
  * @tags recitals
- * @tags songs
  * @param {number} recitalId.path.required - Recital id
  * @param {number} songId.path.required - Song id
  * @return {object} 200 - Song removed
@@ -363,7 +361,6 @@ recitalController
  * GET /auth/recitals/{recitalId}/songs
  * @summary Retrieve all songs on a recital
  * @tags recitals
- * @tags songs
  * @param {number} recitalId.path.required - Recital id
  * @return {object} 200 - Songs retrieved
  * @return {object} 401 - Authorization error response
@@ -374,7 +371,6 @@ recitalController
  * PUT /auth/recitals/{recitalId}/songs
  * @summary Reorder songs on a recital
  * @tags recitals
- * @tags songs
  * @param {number} recitalId.path.required - Recital id
  * @param {Song[]} request.body.required - List of songs with order specified
  * @return {object} 200 - Songs reordered

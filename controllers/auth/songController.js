@@ -12,6 +12,25 @@ songController.get('/ping', (req, res) => {
   });
 });
 
+/**
+ * A song
+ * @typedef Song
+ * @property {number} id - Song id
+ * @property {string} title.required - The title
+ * @property {string} composer.required - The composer
+ * @property {string} language.required - Original language
+ * @property {string} period - Time period the song was written (ie. Romantic, Classical, etc.)
+ */
+
+/**
+ * GET /auth/songs
+ * @summary Get all user's songs
+ * @tags songs
+ * @param {Song} request.body.required - Song details
+ * @return {object} 201 - Song created
+ * @return {object} 400 - Invalid request error response
+ * @return {object} 401 - Authorization error response
+ */
 songController.post('/', async (req, res, next) => {
   try {
     const { title, composer, language } = req.body;
@@ -37,6 +56,28 @@ songController.post('/', async (req, res, next) => {
     next(error);
   }
 });
+
+/**
+ * PATCH /auth/songs/{songId}
+ * @summary Update a user's song
+ * @tags songs
+ * @param {Song} request.body.required - Information to update
+ * @param {number} songId.path.required - Id of the song
+ * @return {object} 200 - Song updated
+ * @return {object} 400 - Invalid request response
+ * @return {object} 401 - Authorization error response
+ * @return {object} 404 - Not found error response
+ */
+
+/**
+ * DELETE /auth/songs/{songId}
+ * @summary Delete a user's song
+ * @tags songs
+ * @param {number} songId.path.required - Id of the song
+ * @return {object} 200 - Recital deleted
+ * @return {object} 401 - Authorization error response
+ * @return {object} 404 - Not found error response
+ */
 
 songController
   .route('/:songId')
