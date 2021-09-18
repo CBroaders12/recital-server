@@ -281,6 +281,34 @@ recitalController
       next(error);
     }
   })
+  .patch(async (req, res, next) => {
+    try {
+      const { recitalId, songId } = req.params;
+      const { notes } = req.body;
+
+      const [count, recitalSong] = await models.recital_song.update(
+        { notes },
+        {
+          returning: true,
+          where: {
+            userId,
+            recitalId,
+          },
+        }
+      );
+
+      if (count === 0) throw new NotFoundError('Song not on recital');
+
+      res.status(200).json({
+        status: 'success',
+        data: {
+          updatedNote: recitalSong.notes,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  })
   .delete(async (req, res, next) => {
     try {
       const { songId, recitalId } = req.params;
