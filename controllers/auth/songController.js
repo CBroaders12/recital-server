@@ -16,39 +16,66 @@ const songController = Router();
  */
 
 /**
- * GET /auth/songs
- * @summary Get all user's songs
+ * POST /auth/songs
+ * @summary Create a new song
  * @tags songs
  * @param {Song} request.body.required - Song details
  * @return {object} 201 - Song created
  * @return {object} 400 - Invalid request error response
  * @return {object} 401 - Authorization error response
  */
-songController.post('/', async (req, res, next) => {
-  try {
-    const { title, composer, language } = req.body;
-    const { id: userId } = req.user;
+songController
+  .route('/')
+  .post(async (req, res, next) => {
+    try {
+      const { title, composer, language, period } = req.body;
+      const { id: userId } = req.user;
 
-    if (!title || !composer || !language)
-      throw new InvalidRequestError('Song missing required information');
+      if (!title || !composer || !language)
+        throw new InvalidRequestError('Song missing required information');
 
-    const newSong = await models.song.create({
-      title,
-      composer,
-      language,
-      userId,
-    });
+      const newSong = await models.song.create({
+        title,
+        composer,
+        language,
+        period,
+        userId,
+      });
 
-    res.status(201).json({
-      status: 'success',
-      data: {
-        song: newSong,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-});
+      res.status(201).json({
+        status: 'success',
+        data: {
+          song: newSong,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  })
+  .get(async (req, res, next) => {
+    try {
+      const { id: userId } = req.user;
+
+      const userSongs = await models.song.findAll({
+        where: {
+          userId,
+        },
+      });
+
+      if (userSongs.length === 0)
+        throw new NotFoundError('No songs found for user');
+
+      res.status(200).json({
+        status: 'success',
+        data: {
+          count: userSongs.length,
+          songs: userSongs,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
 
 /**
  * PATCH /auth/songs/{songId}
