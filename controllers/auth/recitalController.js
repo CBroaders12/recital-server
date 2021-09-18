@@ -6,13 +6,6 @@ const { sequelize } = require('../../models');
 
 const recitalController = Router();
 
-recitalController.get('/ping', (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    data: null,
-  });
-});
-
 /**
  * A recital
  * @typedef Recital

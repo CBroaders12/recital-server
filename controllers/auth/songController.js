@@ -5,13 +5,6 @@ const { InvalidRequestError, NotFoundError } = require('../../errors');
 
 const songController = Router();
 
-songController.get('/ping', (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    data: null,
-  });
-});
-
 /**
  * A song
  * @typedef Song
