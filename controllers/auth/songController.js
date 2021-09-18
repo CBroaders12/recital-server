@@ -6,23 +6,22 @@ const { InvalidRequestError, NotFoundError } = require('../../errors');
 const songController = Router();
 
 /**
- * A song
- * @typedef Song
- * @property {number} id - Song id
- * @property {string} title.required - The title
- * @property {string} composer.required - The composer
- * @property {string} language.required - Original language
- * @property {string} period - Time period the song was written (ie. Romantic, Classical, etc.)
- */
-
-/**
  * POST /auth/songs
  * @summary Create a new song
  * @tags songs
- * @param {Song} request.body.required - Song details
+ * @param {object} request.body.required - Song details
  * @return {object} 201 - Song created
  * @return {object} 400 - Invalid request error response
  * @return {object} 401 - Authorization error response
+ */
+
+/**
+ * GET /auth/songs
+ * @summary Get all song's made by a user
+ * @tags songs
+ * @return {object} 200 - List of user's songs
+ * @return {object} 401 - Authorization error response
+ * @return {object} 404 - Not Found error response
  */
 songController
   .route('/')
@@ -62,9 +61,6 @@ songController
         },
       });
 
-      if (userSongs.length === 0)
-        throw new NotFoundError('No songs found for user');
-
       res.status(200).json({
         status: 'success',
         data: {
@@ -81,7 +77,7 @@ songController
  * PATCH /auth/songs/{songId}
  * @summary Update a user's song
  * @tags songs
- * @param {Song} request.body.required - Information to update
+ * @param {object} request.body.required - Information to update
  * @param {number} songId.path.required - Id of the song
  * @return {object} 200 - Song updated
  * @return {object} 400 - Invalid request response

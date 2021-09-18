@@ -7,37 +7,17 @@ const { sequelize } = require('../../models');
 const recitalController = Router();
 
 /**
- * A recital
- * @typedef Recital
- * @property {string} name.required - Name of the recital
- * @property {Date} date - Date of the recital
- * @property {string} location - Location of recital
- * @property {string} description - Additional info
- * @property {string} programNotes - Program notes for the recital
- */
-
-/**
- * A song
- * @typedef Song
- * @property {number} id - Song id
- * @property {string} title.required - The title
- * @property {string} composer.required - The composer
- * @property {string} language.required - Original language
- * @property {string} period - Time period the song was written (ie. Romantic, Classical, etc.)
- */
-
-/**
- * POST /auth/recitals
+ * POST /api/v1/auth/recitals
  * @summary Create a new recital
  * @tags recitals
- * @param {Recital} request.body.required - Recital details
+ * @param {object} request.body.required - Recital details
  * @return {object} 200 - Recital created
  * @return {object} 400 - Invalid request response
  * @return {object} 401 - Authorization error response
  */
 
 /**
- * GET /auth/recitals
+ * GET /api/v1/auth/recitals
  * @summary Get all user's recitals
  * @tags recitals
  * @return {object} 200 - Success response
@@ -94,10 +74,10 @@ recitalController
   });
 
 /**
- * PATCH /auth/recitals/{recitalId}
+ * PATCH /api/v1/auth/recitals/{recitalId}
  * @summary Update information of a selected recital
  * @tags recitals
- * @param {Recital} request.body.required - Updated recital info
+ * @param {object} request.body.required - Updated recital info
  * @param {number} recitalId.path.required - Recital id
  * @return {object} 200 - Recital updated
  * @return {object} 400 - Invalid request response
@@ -106,7 +86,7 @@ recitalController
  */
 
 /**
- * GET /auth/recitals/{recitalId}
+ * GET /api/v1/auth/recitals/{recitalId}
  * @summary Get info for specific recital
  * @tags recitals
  * @param {number} recitalId.path.required - Recital id
@@ -116,7 +96,7 @@ recitalController
  */
 
 /**
- * DELETE /auth/recitals/{recitalId}
+ * DELETE /api/v1/auth/recitals/{recitalId}
  * @summary Delete a recital
  * @tags recitals
  * @param {number} recitalId.path.required - Recital id
@@ -178,6 +158,10 @@ recitalController
           id: recitalId,
           userId,
         },
+        include: {
+          model: models.song,
+          as: 'songs',
+        },
       });
 
       if (!recital)
@@ -220,7 +204,7 @@ recitalController
   });
 
 /**
- * POST /auth/recitals/{recitalId}/songs/{songId}
+ * POST /api/v1/auth/recitals/{recitalId}/songs/{songId}
  * @summary Add a song to a recital
  * @tags recitals
  * @param {number} recitalId.path.required - Recital id
@@ -231,7 +215,7 @@ recitalController
  */
 
 /**
- * DELETE /auth/recitals/{recitalId}/songs/{songId}
+ * DELETE /api/v1/auth/recitals/{recitalId}/songs/{songId}
  * @summary Remove a song from a recital
  * @tags recitals
  * @param {number} recitalId.path.required - Recital id
@@ -351,7 +335,7 @@ recitalController
   });
 
 /**
- * GET /auth/recitals/{recitalId}/songs
+ * GET /api/v1/auth/recitals/{recitalId}/songs
  * @summary Retrieve all songs on a recital
  * @tags recitals
  * @param {number} recitalId.path.required - Recital id
@@ -361,7 +345,7 @@ recitalController
  */
 
 /**
- * PUT /auth/recitals/{recitalId}/songs
+ * PUT /api/v1/auth/recitals/{recitalId}/songs
  * @summary Reorder songs on a recital
  * @tags recitals
  * @param {number} recitalId.path.required - Recital id

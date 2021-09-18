@@ -7,7 +7,7 @@
     "test": "NODE_ENV=test jest --watchAll --verbose --runInBand",
     "start": "node index.js",
     "dev": "nodemon",
-    "seed": "npx sequelize db:seed:all",
+    "seed:all": "npx sequelize db:seed:all",
     "unseed:all": "npx sequelize db:seed:undo:all"
   },
   "author": "Conor Broaders",
