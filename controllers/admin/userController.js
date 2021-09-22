@@ -7,10 +7,11 @@ const jwt = require('jsonwebtoken');
 
 const userController = Router();
 
-// TODO: Add pagination
 userController.get('/users', async (req, res, next) => {
   try {
-    let allUsers = await models.user.findAll();
+    let { offset = 0, limit = 20 } = req.query;
+
+    let allUsers = await models.user.findAll({ limit, offset });
 
     res.status(200).json({
       status: 'success',
