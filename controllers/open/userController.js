@@ -7,6 +7,12 @@ const jwt = require('jsonwebtoken');
 
 const userController = Router();
 
+// from https://www.emailregex.com/
+const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+// from https://ihateregex.io/expr/password/
+const passwordRegex =
+  /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$/;
+
 /**
  * A user
  * @typedef User
@@ -28,6 +34,12 @@ userController.post('/register', async (req, res, next) => {
 
     if (!password || !email)
       throw new InvalidRequestError('Missing email or password');
+
+    if (!emailRegex.test(email))
+      throw new InvalidRequestError('Invalid email address');
+
+    if (!passwordRegex.test(password))
+      throw new InvalidRequestError('Invalid password');
 
     const newUser = await models.user.create({
       email,
