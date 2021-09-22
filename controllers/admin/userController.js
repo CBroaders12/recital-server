@@ -7,11 +7,17 @@ const jwt = require('jsonwebtoken');
 
 const userController = Router();
 
-userController.get('/users', async (req, res, next) => {
+userController.get('/', async (req, res, next) => {
   try {
     let { offset = 0, limit = 20 } = req.query;
 
-    let allUsers = await models.user.findAll({ limit, offset });
+    let allUsers = await models.user.findAll({
+      limit,
+      offset,
+      attributes: {
+        exclude: ['password'],
+      },
+    });
 
     res.status(200).json({
       status: 'success',
@@ -25,7 +31,8 @@ userController.get('/users', async (req, res, next) => {
   }
 });
 
-userController.route('/users/:userId').delete(async (req, res, next) => {
+// TODO: Add password reset path
+userController.route('/:userId').delete(async (req, res, next) => {
   try {
     const { userId } = req.params;
 
