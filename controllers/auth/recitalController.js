@@ -1,8 +1,7 @@
-const models = require('../../models');
+const models, { sequelize } = require('../../db/models');
 const { InvalidRequestError, NotFoundError } = require('../../errors');
 
 const { Router } = require('express');
-const { sequelize } = require('../../models');
 
 const recitalController = Router();
 

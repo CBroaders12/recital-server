@@ -1,5 +1,5 @@
 const app = require('./app');
-const db = require('./models');
+const db = require('./db/models');
 
 const startServer = async () => {
   try {

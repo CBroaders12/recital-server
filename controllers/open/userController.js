@@ -1,4 +1,4 @@
-const models = require('../../models');
+const models = require('../../db/models');
 const { AuthorizationError, InvalidRequestError } = require('../../errors');
 const { Router } = require('express');
 

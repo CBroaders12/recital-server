@@ -1,34 +1,34 @@
 const jwt = require('jsonwebtoken');
 const { AuthorizationError } = require('../errors');
-const models = require('../models');
+const models = require('../db/models');
 
 const validateToken = async (req, res, next) => {
-	if (req.method === 'OPTIONS') {
-		next();
-	}
-	try {
-		if (!req.headers.authorization)
-			throw new AuthorizationError('Missing or invalid token');
+  if (req.method === 'OPTIONS') {
+    next();
+  }
+  try {
+    if (!req.headers.authorization)
+      throw new AuthorizationError('Missing or invalid token');
 
-		const { authorization } = req.headers;
+    const { authorization } = req.headers;
 
-		const token = authorization.includes('Bearer')
-			? authorization.split(' ')[1]
-			: authorization;
+    const token = authorization.includes('Bearer')
+      ? authorization.split(' ')[1]
+      : authorization;
 
-		const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
 
-		if (!payload) throw new AuthorizationError('Invalid token');
+    if (!payload) throw new AuthorizationError('Invalid token');
 
-		const user = await models.user.findOne({
-			where: { id: payload.id },
-		});
+    const user = await models.user.findOne({
+      where: { id: payload.id },
+    });
 
-		req.user = user;
-		next();
-	} catch (error) {
-		next(error);
-	}
+    req.user = user;
+    next();
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = validateToken;

@@ -1,4 +1,4 @@
-const models = require('../../models');
+const models = require('../../db/models');
 const { Router } = require('express');
 
 const recitalController = Router();
