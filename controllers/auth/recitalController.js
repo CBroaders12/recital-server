@@ -1,4 +1,4 @@
-const models, { sequelize } = require('../../db/models');
+const models = require('../../db/models');
 const { InvalidRequestError, NotFoundError } = require('../../errors');
 
 const { Router } = require('express');
@@ -459,7 +459,7 @@ recitalController
       }
 
       const recitalSongs = await targetRecital.getSongs({
-        order: [[sequelize.col('recital_song.order'), 'asc']],
+        order: [[models.sequelize.col('recital_song.order'), 'asc']],
       });
 
       res.status(200).json({
